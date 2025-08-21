@@ -19,6 +19,14 @@ import CouponManagement from './pages/CouponManagement';
 import DataPage from './pages/DataPage';
 import Settings from './pages/Settings';
 import apiService from './services/api';
+// import { GrTransaction } from "react-icons/gr";
+import Transaction from "./pages/Transaction";
+import Income from "./pages/Income";
+import Expense from "./pages/Expense";
+import Budget from "./pages/Budget";
+import Udhari from "./pages/Udhari";
+import Notification from "./pages/Notification";
+import Subscription from "./pages/Subscription";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -92,8 +100,16 @@ const App = () => {
           <Route path="/admin/sellers" element={<ProtectedRoute><SellerManagement /></ProtectedRoute>} />
           <Route path="/admin/coupons" element={<ProtectedRoute><CouponManagement /></ProtectedRoute>} />
           <Route path="/admin/data" element={<ProtectedRoute><DataPage /></ProtectedRoute>} />
+
+          <Route path="/admin/transaction" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
+          <Route path="/admin/income" element={<ProtectedRoute><Income/></ProtectedRoute>} />
+          <Route path="/admin/expense" element={<ProtectedRoute><Expense /></ProtectedRoute>} />
+          <Route path="/admin/udhari" element={<ProtectedRoute><Udhari /></ProtectedRoute>} />
+          <Route path="/admin/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
+          <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
+          <Route path="/admin/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          
+
           {/* Catch all route - redirect to admin dashboard */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>

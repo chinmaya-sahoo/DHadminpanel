@@ -3,12 +3,17 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
   ShoppingBag, 
-  Package, 
+  Package,
+  PiggyBank,
   Users, 
   LogOut,
+  ArrowLeftRight,
+  Blend,
   Tag,
   Store,
   Menu,
+  Bell,
+  CircleDollarSign,
   X,
   Presentation,
   File,
@@ -24,14 +29,18 @@ const SidebarLayout = ({ children }) => {
   };
 
   const menuItems = [
-    { path: '/admin', icon: <ShoppingBag size={20} />, label: 'Dashboard' },
-    { path: '/admin/products', icon: <Package size={20} />, label: 'Products' },
-    { path: '/admin/hero-carousel', icon: <Presentation size={20} />, label: 'Hero Carousel' },
-    { path: '/admin/categories', icon: <Tag size={20} />, label: 'Categories' },
-    { path: '/admin/orders', icon: <Users size={20} />, label: 'Orders' },
-    { path: '/admin/sellers', icon: <Store size={20} />, label: 'Sellers' },  
-    { path: '/admin/data', icon: <File size={20} />, label: 'Data' },
-    { path: '/admin/coupons', icon: <Users size={20} />, label: 'Coupons' },
+    { path: '/admin', icon: <Users size={20} />, label: 'Dashboard' },
+    // { path: '/admin/products', icon: <Package size={20} />, label: 'Products' },
+    // { path: '/admin/hero-carousel', icon: <Presentation size={20} />, label: 'Hero Carousel' },
+    // { path: '/admin/categories', icon: <Tag size={20} />, label: 'Categories' },
+    // { path: '/admin/orders', icon: <Users size={20} />, label: 'Orders' },
+    { path: '/admin/transaction', icon: <ArrowLeftRight size={20} />, label: 'Transaction' },
+    { path: '/admin/income', icon: <Tag size={20} />, label: 'Income' },
+    { path: '/admin/expense', icon: <PiggyBank size={20} />, label: 'Expense' },
+    { path: '/admin/budget', icon: <Package size={20} />, label: 'Budget' },
+    { path: '/admin/udhari', icon: <Blend size={20} />, label: 'Udhari' },
+    { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
+    { path: '/admin/subscription', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
@@ -134,7 +143,7 @@ const SidebarLayout = ({ children }) => {
             <div className="flex items-center space-x-2">
              
               <img src="/logo.png" alt="Riko Admin Logo" className="w-8 h-8 rounded-full shadow" />
-              <span className="text-lg font-semibold text-gray-800">Riko Admin</span>
+              <span className="text-lg font-semibold text-gray-800">DH Admin</span>
              
             </div>
             </Link>
