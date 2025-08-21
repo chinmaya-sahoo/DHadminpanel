@@ -75,7 +75,7 @@ const SidebarLayout = ({ children }) => {
               <div className="flex items-center space-x-3">
                 <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-10 h-10 rounded-full shadow" />
                 <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Daily Hisab Admin
+                  DH Admin
                 </h2>
               </div>
               </Link>
