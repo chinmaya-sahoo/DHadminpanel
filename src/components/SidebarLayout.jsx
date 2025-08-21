@@ -43,7 +43,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/udhari', icon: <Blend size={20} />, label: 'Udhari' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
     { path: '/admin/subscription', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
-    { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
+    // { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
   const handleLogout = () => {
