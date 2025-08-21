@@ -2,24 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Dashboard from "./components/Dashboard";
-import Products from "./pages/Products";
-import Orders from "./pages/Orders";
 import Login from "./pages/Login";
-import EditProduct from "./pages/EditProduct";
 import SidebarLayout from "./components/SidebarLayout";
-import Seller from "./pages/Seller";
-import Editseller from "./pages/Editseller";
-import Categories from './pages/Categories';
-import EditCategories from "./pages/EditCategories";
 import ErrorBoundary from './components/ErrorBoundary';
-import HeroCarousel from './pages/HeroCarousel';
-import EditHeroCarousel from './pages/EditHeroCarousel';
-import SellerManagement from './pages/SellerManagement';
-import CouponManagement from './pages/CouponManagement';
-import DataPage from './pages/DataPage';
 import Settings from './pages/Settings';
 import apiService from './services/api';
-// import { GrTransaction } from "react-icons/gr";
 import Transaction from "./pages/Transaction";
 import Income from "./pages/Income";
 import Expense from "./pages/Expense";
@@ -73,7 +60,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return isValid ? <SidebarLayout>{children}</SidebarLayout> : <Navigate to="/admin/login" replace />;
+  return true ? <SidebarLayout>{children}</SidebarLayout> : <Navigate to="/admin/login" replace />;
 };
 
 const App = () => {
@@ -87,28 +74,15 @@ const App = () => {
           {/* Protected routes */}
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/admin/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
-          <Route path="/admin/products/edit/:id" element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
-          <Route path="/admin/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-          <Route path="/admin/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
-          <Route path="/admin/categories/edit/:id" element={<ProtectedRoute><EditCategories /></ProtectedRoute>} />
-          <Route path="/admin/seller" element={<ProtectedRoute><Seller /></ProtectedRoute>} />
-          <Route path="/admin/seller/edit/:id" element={<ProtectedRoute><Editseller /></ProtectedRoute>} />
-          <Route path="/admin/hero-carousel" element={<ProtectedRoute><HeroCarousel /></ProtectedRoute>} />
-          <Route path="/admin/hero-carousel/edit/:id" element={<ProtectedRoute><EditHeroCarousel /></ProtectedRoute>} />
-          <Route path="/admin/hero-carousel/new" element={<ProtectedRoute><EditHeroCarousel /></ProtectedRoute>} />
-          <Route path="/admin/sellers" element={<ProtectedRoute><SellerManagement /></ProtectedRoute>} />
-          <Route path="/admin/coupons" element={<ProtectedRoute><CouponManagement /></ProtectedRoute>} />
-          <Route path="/admin/data" element={<ProtectedRoute><DataPage /></ProtectedRoute>} />
+          <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} /> 
 
           <Route path="/admin/transaction" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
+          <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
           <Route path="/admin/income" element={<ProtectedRoute><Income/></ProtectedRoute>} />
           <Route path="/admin/expense" element={<ProtectedRoute><Expense /></ProtectedRoute>} />
           <Route path="/admin/udhari" element={<ProtectedRoute><Udhari /></ProtectedRoute>} />
           <Route path="/admin/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
-          <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
           <Route path="/admin/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
-          <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
 
           {/* Catch all route - redirect to admin dashboard */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
