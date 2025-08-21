@@ -60,7 +60,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return true ? <SidebarLayout>{children}</SidebarLayout> : <Navigate to="/admin/login" replace />;
+  return isValid ? <SidebarLayout>{children}</SidebarLayout> : <Navigate to="/admin/login" replace />;
 };
 
 const App = () => {
