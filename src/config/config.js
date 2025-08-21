@@ -56,7 +56,7 @@ const config = {
     const cleanPath = imagePath.replace(/^\/+/, '');
     
     // If it's a path to a backend data file
-    if (cleanPath.includes('Rikocraft.com') || !cleanPath.includes('/')) {
+    if (cleanPath.includes('abc.com') || !cleanPath.includes('/')) {
       // Always use /pawnbackend/data/ prefix for backend files
       const basePath = cleanPath.startsWith('pawnbackend/data/') ? '' : 'pawnbackend/data/';
       return `${config.API_BASE_URL}/${basePath}${cleanPath}`;

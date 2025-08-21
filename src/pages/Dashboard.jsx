@@ -1,124 +1,111 @@
-// File: admin/src/pages/Dashboard.jsx
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import apiService from '../services/api';
+import React from "react";
+import { ArrowRight, TrendingUp, TrendingDown, Wallet } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
-  const [stats, setStats] = useState({
-    totalProducts: 0,
-    featuredProducts: 0,
-    bestSellers: 0,
-    mostLoved: 0,
-    totalOrders: 0
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+// Sample data for the activity graph
+const data = [
+  { name: "Jan", income: 4000, expense: 2400 },
+  { name: "Feb", income: 3000, expense: 1398 },
+  { name: "Mar", income: 5000, expense: 2800 },
+  { name: "Apr", income: 4780, expense: 3908 },
+  { name: "May", income: 5890, expense: 4800 },
+  { name: "Jun", income: 4390, expense: 3800 },
+];
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  const fetchStats = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch all products
-      const allProducts = await apiService.getProducts();
-      const featured = await apiService.getProductsBySection('featured');
-      const bestSellers = await apiService.getProductsBySection('bestsellers');
-      const mostLoved = await apiService.getProductsBySection('mostloved');
-      const orders = await apiService.getOrders();
-
-      setStats({
-        totalProducts: allProducts.data.length,
-        featuredProducts: featured.data.length,
-        bestSellers: bestSellers.data.length,
-        mostLoved: mostLoved.data.length,
-        totalOrders: orders.data.length
-      });
-    } catch (err) {
-      console.error('Error fetching stats:', err);
-      setError('Failed to load dashboard stats');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const StatCard = ({ title, value, linkTo }) => (
-    <Link 
-      to={linkTo}
-      className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200"
-    >
-      <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-      <p className="text-3xl font-bold text-blue-600 mt-2">{value}</p>
-    </Link>
-  );
-
-  if (loading) {
-    return (
-      <div className="p-6 flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl text-gray-600">Loading dashboard...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="p-6 flex justify-center items-center min-h-screen bg-gray-100">
-        <div className="text-xl text-red-600">{error}</div>
-      </div>
-    );
-  }
+export default function Dashboard() {
+  const navigate = useNavigate();
 
   return (
-    <div className="p-6 space-y-6 bg-gray-100 min-h-screen">
-      <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
-      
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <StatCard 
-          title="Total Products" 
-          value={stats.totalProducts}
-          linkTo="/admin/products"
-        />
-        <StatCard 
-          title="Featured Products" 
-          value={stats.featuredProducts}
-          linkTo="/admin/products?section=featured"
-        />
-        <StatCard 
-          title="Best Sellers" 
-          value={stats.bestSellers}
-          linkTo="/admin/products?section=bestsellers"
-        />
-        <StatCard 
-          title="Most Loved" 
-          value={stats.mostLoved}
-          linkTo="/admin/products?section=mostloved"
-        />
-        <StatCard 
-          title="Total Orders" 
-          value={stats.totalOrders}
-          linkTo="/admin/orders"
-        />
+    <div className="p-6 space-y-6">
+      {/* Top Stats */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Total Budget */}
+        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+          <Wallet className="w-10 h-10 text-blue-500" />
+          <div>
+            <p className="text-gray-500 text-sm">Total Budget</p>
+            <h2 className="text-2xl font-bold">$50,000</h2>
+          </div>
+        </div>
+
+        {/* Total Expense */}
+        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+          <TrendingDown className="w-10 h-10 text-red-500" />
+          <div>
+            <p className="text-gray-500 text-sm">Total Expense</p>
+            <h2 className="text-2xl font-bold">$20,000</h2>
+          </div>
+        </div>
+
+        {/* Total Income */}
+        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+          <TrendingUp className="w-10 h-10 text-green-500" />
+          <div>
+            <p className="text-gray-500 text-sm">Total Income</p>
+            <h2 className="text-2xl font-bold">$30,000</h2>
+          </div>
+        </div>
+
+        {/* Total Profit */}
+        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+          <Wallet className="w-10 h-10 text-purple-500" />
+          <div>
+            <p className="text-gray-500 text-sm">Total Profit</p>
+            <h2 className="text-2xl font-bold">$10,000</h2>
+          </div>
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Quick Actions</h2>
-        <div className="flex flex-wrap gap-4">
-          <Link to="/admin/products/new" className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            Add New Product
-          </Link>
-          <Link to="/admin/categories" className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors">
-            Manage Categories
-          </Link>
+      {/* Activity Graph */}
+      <div className="bg-white rounded-2xl shadow-md p-6">
+        <h3 className="text-lg font-semibold mb-4">Activity Graph</h3>
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="income" stroke="#4ade80" strokeWidth={3} />
+            <Line type="monotone" dataKey="expense" stroke="#f87171" strokeWidth={3} />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Recent Transactions */}
+      <div className="bg-white rounded-2xl shadow-md p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Recent Transactions</h3>
+          <button
+            onClick={() => navigate("/admin/transaction")}
+            className="flex items-center gap-1 text-blue-500 hover:underline"
+          >
+            View All <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
+        <ul className="space-y-3">
+          <li className="flex justify-between text-gray-700">
+            <span>Netflix Subscription</span>
+            <span className="text-red-500">- $15</span>
+          </li>
+          <li className="flex justify-between text-gray-700">
+            <span>Freelance Income</span>
+            <span className="text-green-500">+ $500</span>
+          </li>
+          <li className="flex justify-between text-gray-700">
+            <span>Groceries</span>
+            <span className="text-red-500">- $120</span>
+          </li>
+        </ul>
       </div>
     </div>
   );
-};
-
-export default Dashboard;
-
+}

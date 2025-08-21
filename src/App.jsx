@@ -1,7 +1,7 @@
 // File: admin/src/App.jsx
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
+import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import SidebarLayout from "./components/SidebarLayout";
 import ErrorBoundary from './components/ErrorBoundary';
@@ -14,6 +14,7 @@ import Budget from "./pages/Budget";
 import Udhari from "./pages/Udhari";
 import Notification from "./pages/Notification";
 import Subscription from "./pages/Subscription";
+import Report from "./pages/Report";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -83,6 +84,7 @@ const App = () => {
           <Route path="/admin/udhari" element={<ProtectedRoute><Udhari /></ProtectedRoute>} />
           <Route path="/admin/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
           <Route path="/admin/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
+          <Route path="/admin/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />
 
           {/* Catch all route - redirect to admin dashboard */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
