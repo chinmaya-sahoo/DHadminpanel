@@ -58,13 +58,13 @@ export default function Dashboard() {
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
       {/* Top Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Total Budget */}
         <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
           <Wallet className="w-10 h-10 text-blue-500" />
           <div>
             <p className="text-gray-500 text-sm">Total Budget</p>
-            <h2 className="text-2xl font-bold">$50,000</h2>
+            <h2 className="text-2xl font-bold">₹50,000</h2>
           </div>
         </div>
 
@@ -73,7 +73,7 @@ export default function Dashboard() {
           <TrendingDown className="w-10 h-10 text-red-500" />
           <div>
             <p className="text-gray-500 text-sm">Total Expense</p>
-            <h2 className="text-2xl font-bold">$20,000</h2>
+            <h2 className="text-2xl font-bold">₹20,000</h2>
           </div>
         </div>
 
@@ -82,16 +82,35 @@ export default function Dashboard() {
           <TrendingUp className="w-10 h-10 text-green-500" />
           <div>
             <p className="text-gray-500 text-sm">Total Income</p>
-            <h2 className="text-2xl font-bold">$30,000</h2>
+            <h2 className="text-2xl font-bold">₹30,000</h2>
           </div>
         </div>
+
 
         {/* Total Profit */}
         <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
           <Wallet className="w-10 h-10 text-purple-500" />
           <div>
-            <p className="text-gray-500 text-sm">Total Profit</p>
-            <h2 className="text-2xl font-bold">$10,000</h2>
+            <p className="text-gray-500 text-sm">Total Profit(Revenue)</p>
+            <h2 className="text-2xl font-bold">₹10,000</h2>
+          </div>
+        </div>
+
+        {/*Monthly Installations */}
+        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+          <TrendingUp className="w-10 h-10 text-green-500" />
+          <div>
+            <p className="text-gray-500 text-sm">Monthly Installations</p>
+            <h2 className="text-2xl font-bold"> 3000 </h2>
+          </div>
+        </div>
+
+        {/* Monthly Revenue */}
+        <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
+          <TrendingUp className="w-10 h-10 text-purple-500" />
+          <div>
+            <p className="text-gray-500 text-sm">Upgrades</p>
+            <h2 className="text-2xl font-bold">4000</h2>
           </div>
         </div>
       </div>
@@ -106,7 +125,7 @@ export default function Dashboard() {
 
           {/* Filter Buttons */}
           <div className="flex gap-2">
-            {["daily", "weekly", "monthly", "yearly"].map((p) => (
+            {["daily", "weekly", "monthly"].map((p) => (
               <button
                 key={p}
                 onClick={() => setPeriod(p)}
@@ -139,7 +158,7 @@ export default function Dashboard() {
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
+        <div className="grid lg:grid-cols-4 sm:grid-cols-2 gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
           <div className="text-center">
             <p className="text-sm text-gray-600">Total Active</p>
             <p className="text-xl font-bold text-blue-600">{totalActiveUsers}</p>
@@ -151,6 +170,10 @@ export default function Dashboard() {
           <div className="text-center">
             <p className="text-sm text-gray-600">Freemium Users</p>
             <p className="text-xl font-bold text-blue-400">{userDistribution[1].value}</p>
+          </div>
+          <div className="text-center">
+            <p className="text-sm text-gray-600">Inactive Users</p>
+            <p className="text-xl font-bold text-blue-400">{userDistribution[2].value}</p>
           </div>
         </div>
 
@@ -217,15 +240,15 @@ export default function Dashboard() {
         <ul className="space-y-3">
           <li className="flex justify-between text-gray-700">
             <span>Netflix Subscription</span>
-            <span className="text-red-500">- $15</span>
+            <span className="text-red-500">- ₹15</span>
           </li>
           <li className="flex justify-between text-gray-700">
             <span>Freelance Income</span>
-            <span className="text-green-500">+ $500</span>
+            <span className="text-green-500">+ ₹500</span>
           </li>
           <li className="flex justify-between text-gray-700">
             <span>Groceries</span>
-            <span className="text-red-500">- $120</span>
+            <span className="text-red-500">- ₹120</span>
           </li>
         </ul>
       </div>

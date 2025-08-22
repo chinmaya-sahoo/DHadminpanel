@@ -5,14 +5,14 @@ import { Crown } from "lucide-react";
 const plans = [
   {
     name: "Starter",
-    price: "20$",
+    price: "20₹",
     period: "/month",
     features: ["10 users included", "2GB of storage", "Email support", "Help center access"],
     buttonStyle: "border border-indigo-500 text-indigo-600 hover:bg-indigo-50",
   },
   {
     name: "Pro",
-    price: "30$",
+    price: "30₹",
     period: "/month",
     features: [
       "20 users included",

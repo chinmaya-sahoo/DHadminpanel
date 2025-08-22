@@ -16,6 +16,8 @@ import Notification from "./pages/Notification";
 import Subscription from "./pages/Subscription";
 import Report from "./pages/Report";
 import Hisab from "./pages/Hisab";
+import User_Management from "./pages/User_Management"
+import Subscription_Management from "./pages/Subscription_Management"
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -87,6 +89,8 @@ const App = () => {
           <Route path="/admin/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />
           <Route path="/admin/subscription" element={<ProtectedRoute><Subscription /></ProtectedRoute>} />
           <Route path="/admin/report" element={<ProtectedRoute><Report /></ProtectedRoute>} />
+          <Route path="/admin/user-management" element={<ProtectedRoute><User_Management /></ProtectedRoute>} />
+          <Route path="/admin/subscription-management" element={<ProtectedRoute><Subscription_Management /></ProtectedRoute>} />
 
           {/* Catch all route - redirect to admin dashboard */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
