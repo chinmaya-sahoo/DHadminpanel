@@ -15,6 +15,7 @@ import Udhari from "./pages/Udhari";
 import Notification from "./pages/Notification";
 import Subscription from "./pages/Subscription";
 import Report from "./pages/Report";
+import Hisab from "./pages/Hisab";
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -79,6 +80,7 @@ const App = () => {
 
           <Route path="/admin/transaction" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
           <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
+          <Route path="/admin/hisab" element={<ProtectedRoute><Hisab /></ProtectedRoute>} />
           <Route path="/admin/income" element={<ProtectedRoute><Income/></ProtectedRoute>} />
           <Route path="/admin/expense" element={<ProtectedRoute><Expense /></ProtectedRoute>} />
           <Route path="/admin/udhari" element={<ProtectedRoute><Udhari /></ProtectedRoute>} />
