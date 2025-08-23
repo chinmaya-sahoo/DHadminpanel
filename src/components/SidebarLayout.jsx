@@ -40,7 +40,8 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/user-management', icon: <Command size={20} />, label: 'User Management' },
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
-    // { path: '/admin/subscription', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
+    { path: '/admin/analytics-insights', icon: <Bell size={20} />, label: 'Analytics Insights' },
+    { path: '/admin/feedback-support', icon: <Bell size={20} />, label: 'Feedback' },
     // { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
