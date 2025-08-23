@@ -42,6 +42,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
     { path: '/admin/analytics-insights', icon: <Bell size={20} />, label: 'Analytics Insights' },
     { path: '/admin/feedback-support', icon: <Bell size={20} />, label: 'Feedback' },
+    { path: '/admin/content', icon: <Bell size={20} />, label: 'Content' },
     // { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 

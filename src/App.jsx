@@ -20,6 +20,7 @@ import User_Management from "./pages/User_Management"
 import Subscription_Management from "./pages/Subscription_Management"
 import Analytics_Insights from "./pages/Analytics_Insights"
 import Feedback_Support from "./pages/Feedback_Support"
+import Content from "./pages/Content"
 
 const isAuthenticated = () => {
   const token = localStorage.getItem("token");
@@ -95,6 +96,7 @@ const App = () => {
           <Route path="/admin/subscription-management" element={<ProtectedRoute><Subscription_Management /></ProtectedRoute>} />
           <Route path="/admin/analytics-insights" element={<ProtectedRoute><Analytics_Insights /></ProtectedRoute>} />
           <Route path="/admin/feedback-support" element={<ProtectedRoute><Feedback_Support /></ProtectedRoute>} />
+          <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
 
           {/* Catch all route - redirect to admin dashboard */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
