@@ -33,10 +33,10 @@ const SidebarLayout = ({ children }) => {
 
   const menuItems = [
     { path: '/admin', icon: <Users size={20} />, label: 'Dashboard' },
-    { path: '/admin/transaction', icon: <ArrowLeftRight size={20} />, label: 'Transaction' },
+    // { path: '/admin/transaction', icon: <ArrowLeftRight size={20} />, label: 'Transaction' },
     { path: '/admin/report', icon: <BookMarked size={20} />, label: 'Report' },
     { path: '/admin/hisab', icon: <PiggyBank size={20} />, label: 'Hisab' },
-    { path: '/admin/udhari', icon: <Blend size={20} />, label: 'Udhari' },
+    // { path: '/admin/udhari', icon: <Blend size={20} />, label: 'Udhari' },
     { path: '/admin/user-management', icon: <Command size={20} />, label: 'User Management' },
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },

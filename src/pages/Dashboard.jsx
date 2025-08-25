@@ -231,8 +231,8 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl shadow-md p-4 flex items-center gap-4">
           <Download className="w-10 h-10 text-purple-500" />
           <div>
-            <p className="text-gray-500 text-sm capitalize">Installs ({period})</p>
-            <h2 className="text-2xl font-bold">{installs.toLocaleString()}</h2>
+            <p className="text-gray-500 text-sm capitalize">Installs (Daily)</p>
+            <h2 className="text-2xl font-bold">{96}</h2>
           </div>
         </div>
 
@@ -278,38 +278,7 @@ export default function Dashboard() {
       </div>
 
       {/* Period Filter */}
-      <div className="bg-white rounded-2xl shadow-md p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-semibold">Analytics Overview</h3>
-          <div className="flex gap-2">
-            {["daily", "weekly", "monthly"].map((p) => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`px-4 py-2 rounded-lg text-sm capitalize ${
-                  period === p
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Current Period Stats */}
-        <ResponsiveContainer width="100%" height={300}>
-          <AreaChart data={getCurrentData()}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip />
-            <Area type="monotone" dataKey="installs" stackId="1" stroke="#3b82f6" fill="#3b82f6" />
-            <Area type="monotone" dataKey="revenue" stackId="2" stroke="#4ade80" fill="#4ade80" />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
+      <AnalyticsOverview/>
 
       {/* Trend Analysis */}
       <div className="bg-white rounded-2xl shadow-md p-6">
@@ -471,6 +440,128 @@ export default function Dashboard() {
 
       {/* User Modal */}
       {showUserModal && <UserModal />}
+    </div>
+  );
+}
+
+
+export function AnalyticsOverview() {
+  const [period, setPeriod] = useState("daily");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+
+  // Dummy data
+  const data = {
+    daily: [
+      { time: "Mon", installs: 200, revenue: 400 },
+      { time: "Tue", installs: 300, revenue: 600 },
+      { time: "Wed", installs: 250, revenue: 500 },
+      { time: "Thu", installs: 400, revenue: 800 },
+      { time: "Fri", installs: 350, revenue: 700 },
+    ],
+    weekly: [
+      { time: "Week 1", installs: 1500, revenue: 3000 },
+      { time: "Week 2", installs: 1800, revenue: 3200 },
+      { time: "Week 3", installs: 2000, revenue: 3500 },
+      { time: "Week 4", installs: 1700, revenue: 2800 },
+    ],
+    monthly: [
+      { time: "Jan", installs: 7000, revenue: 15000 },
+      { time: "Feb", installs: 6500, revenue: 14000 },
+      { time: "Mar", installs: 8000, revenue: 16000 },
+    ],
+    custom: [
+      { time: "2025-08-01", installs: 300, revenue: 500 },
+      { time: "2025-08-02", installs: 400, revenue: 700 },
+      { time: "2025-08-03", installs: 250, revenue: 450 },
+      { time: "2025-08-04", installs: 500, revenue: 900 },
+    ],
+  };
+
+  const getCurrentData = () => {
+    if (period !== "custom") return data[period];
+    if (!customFrom || !customTo) return [];
+    return data.custom.filter((d) => d.time >= customFrom && d.time <= customTo);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-md p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-semibold">Analytics Overview</h3>
+        <div className="flex gap-2 items-center">
+          {["daily", "weekly", "monthly"].map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`px-4 py-2 rounded-lg text-sm capitalize ${
+                period === p
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+          <button
+            onClick={() => setPeriod("custom")}
+            className={`px-4 py-2 rounded-lg text-sm ${
+              period === "custom"
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            Custom
+          </button>
+        </div>
+      </div>
+
+      {/* Custom Date Filter */}
+      {period === "custom" && (
+        <div className="flex gap-4 mb-4 items-center">
+          <div>
+            <label className="text-sm text-gray-600 block mb-1">From</label>
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => setCustomFrom(e.target.value)}
+              className="px-3 py-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label className="text-sm text-gray-600 block mb-1">To</label>
+            <input
+              type="date"
+              value={customTo}
+              onChange={(e) => setCustomTo(e.target.value)}
+              className="px-3 py-2 border rounded-lg"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Chart */}
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={getCurrentData()}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" />
+          <YAxis />
+          <Tooltip />
+          <Area
+            type="monotone"
+            dataKey="installs"
+            stackId="1"
+            stroke="#3b82f6"
+            fill="#3b82f6"
+          />
+          <Area
+            type="monotone"
+            dataKey="revenue"
+            stackId="2"
+            stroke="#4ade80"
+            fill="#4ade80"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
     </div>
   );
 }
