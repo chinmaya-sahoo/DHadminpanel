@@ -10,7 +10,7 @@ const featureUsageData = [
   { feature: "Voice Entry", usage: 320 },
   { feature: "Exports", usage: 210 },
   { feature: "Reports", usage: 150 },
-  { feature: "Doctor Consult", usage: 95 },
+  { feature: "Consultings", usage: 95 },
 ];
 
 const dailyVsMonthly = [
