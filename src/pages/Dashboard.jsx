@@ -486,9 +486,9 @@ export function AnalyticsOverview() {
 
   return (
     <div className="bg-white rounded-2xl shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center mb-6 gap-3">
         <h3 className="text-lg font-semibold">Analytics Overview</h3>
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center overflow-x-scroll">
           {["daily", "weekly", "monthly"].map((p) => (
             <button
               key={p}
@@ -517,7 +517,7 @@ export function AnalyticsOverview() {
 
       {/* Custom Date Filter */}
       {period === "custom" && (
-        <div className="flex gap-4 mb-4 items-center">
+        <div className="flex gap-4 mb-4 items-center flex-wrap">
           <div>
             <label className="text-sm text-gray-600 block mb-1">From</label>
             <input

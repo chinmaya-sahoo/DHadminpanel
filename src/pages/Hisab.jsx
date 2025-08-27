@@ -27,7 +27,7 @@ export default function Hisab() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+              className={`px-2 sm:px-6 py-1 md:py-2 rounded-full font-medium text-sm md:text-lg transition-all duration-300 ${
                 activeTab === tab
                   ? "bg-white text-gray-700 shadow"
                   : "text-white"

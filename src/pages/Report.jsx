@@ -181,7 +181,7 @@ export default function Report() {
             <Area type="monotone" dataKey="totalUsers" stackId="1" stroke="#3b82f6" fill="#3b82f6" name="Total Users" />
             <Area type="monotone" dataKey="newUsers" stackId="2" stroke="#4ade80" fill="#4ade80" name="New Users" />
             <Line type="monotone" dataKey="churn" stroke="#f87171" strokeWidth={2} name="Churn" />
-            <Legend />
+            <Legend className="mt-10"/>
           </AreaChart>
         </ResponsiveContainer>
       </div>
@@ -361,9 +361,9 @@ export default function Report() {
 
       {/* Enhanced Income vs Expense Summary */}
       <div className="bg-white rounded-2xl shadow-md p-6">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4 gap-3">
           <h3 className="text-lg font-semibold">Income vs Expense Summary</h3>
-          <div className="flex gap-2">
+          <div className="flex gap-2 overflow-x-scroll">
             {["daily", "weekly", "monthly"].map((period) => (
               <button
                 key={period}

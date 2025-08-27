@@ -271,8 +271,8 @@ const BudgetManager = () => {
       <div className="text-4xl text-blue-500 mb-3 group-hover:scale-110 transition-transform">
         <Plus size={48} />
       </div>
-      <h3 className="text-lg font-semibold text-gray-700 mb-1">Create New Budget</h3>
-      <p className="text-sm text-gray-500 text-center">Set spending limits for different categories</p>
+      <h3 className="text-lg font-semibold text-gray-700 mb-1 text-center">Create New Budget</h3>
+      <p className="text-sm text-gray-500 text-center">Set limits for categories</p>
     </div>
   );
 
@@ -282,16 +282,16 @@ const BudgetManager = () => {
     
     return (
       <div 
-        className="bg-white p-6 rounded-xl border-2 border-gray-200 hover:shadow-lg cursor-pointer transition-all duration-300 h-52 hover:border-blue-300 group"
+        className="bg-white p-6 rounded-xl border-2 border-gray-200 hover:shadow-lg cursor-pointer transition-all duration-300 sm:h-52 hover:border-blue-300 group"
         onClick={() => viewBudgetDetails(budget)}
       >
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row justify-between items-start mb-4">
+          <div className="flex sm:flex-row flex-col items-center gap-3 mx-auto sm:mx-0">
             <div className="text-2xl p-2 bg-gray-100 rounded-lg group-hover:bg-blue-100 transition-colors">
               {budget.icon}
             </div>
             <div>
-              <h3 className="font-bold text-gray-800 text-lg">{budget.name}</h3>
+              <h3 className="font-bold text-gray-800 sm:text-lg text-sm">{budget.name}</h3>
               <p className="text-sm text-gray-500">{budget.totalItems} expenses</p>
             </div>
           </div>
@@ -307,7 +307,7 @@ const BudgetManager = () => {
         </div>
         
         <div className="space-y-3">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center sm:flex-row flex-col">
             <span className="text-2xl font-bold text-gray-800">${budget.amount}</span>
             <span className={`text-sm font-semibold ${remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
               ${Math.abs(remaining).toFixed(2)} {remaining >= 0 ? 'left' : 'over'}
@@ -327,8 +327,8 @@ const BudgetManager = () => {
             </div>
           </div>
           
-          <div className="flex justify-between items-center mt-2">
-            <span className={`text-xs font-medium px-2 py-1 rounded-full ${getAccountTypeColor(budget.accountType)} bg-opacity-20`}>
+          <div className="flex justify-between items-center mt-2 sm:flex-row flex-col">
+            <span className={`text-xs text-center font-medium px-2 py-1 rounded-full ${getAccountTypeColor(budget.accountType)} bg-opacity-20`}>
               {getAccountTypeLabel(budget.accountType)}
             </span>
             <p className="text-xs text-gray-500">
@@ -373,9 +373,11 @@ const BudgetManager = () => {
             <p className="text-gray-600">Manage your spending categories and track expenses</p>
             
             {/* Account Filter */}
-            <div className="flex items-center gap-3 mt-4 mb-6">
+            <div className="flex items-start sm:items-center gap-3 mt-4 mb-6 flex-col sm:flex-row">
+              <div className='flex gap-4'>
               <Filter size={20} className="text-gray-500" />
               <span className="text-sm font-medium text-gray-700">Filter by account:</span>
+              </div>
               <select 
                 value={accountFilter}
                 onChange={(e) => setAccountFilter(e.target.value)}

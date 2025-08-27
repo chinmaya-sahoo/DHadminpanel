@@ -206,8 +206,8 @@ const IncomeManager = () => {
     const category = getCategoryById(income.categoryId);
     
     return (
-      <div className="p-6 border-2 border-gray-200 rounded-xl hover:shadow-lg cursor-pointer h-48 bg-white transition-all duration-300 hover:border-blue-300">
-        <div className="flex gap-3 items-center justify-between mb-4">
+      <div className="p-6 border-2 border-gray-200 rounded-xl hover:shadow-lg cursor-pointer sm:h-48 bg-white transition-all duration-300 hover:border-blue-300">
+        <div className="flex flex-col sm:flex-row gap-3 items-center sm:justify-between mb-4">
           <div>
             <h3 className="font-bold text-gray-800">{income.name}</h3>
             {/* <p className="text-sm text-gray-500">{income.totalItems} transactions</p> */}
@@ -217,9 +217,9 @@ const IncomeManager = () => {
               <span className="text-xs text-gray-500">{account?.name}</span>
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-right flex gap-4 md:flex-col">
             <h3 className="font-bold text-green-600 text-lg">${income.amount.toLocaleString()}</h3>
-            <span className={`inline-block px-2 py-1 rounded-full text-xs ${getColorClass(category?.color)} text-white`}>
+            <span className={`inline-block px-2 py-1 rounded-full text-xs ${getColorClass(category?.color)} text-white text-center`}>
               {category?.name}
             </span>
           </div>
@@ -249,8 +249,8 @@ const IncomeManager = () => {
       <div className="text-4xl text-blue-500 mb-2 group-hover:scale-110 transition-transform">
         <Plus size={48} />
       </div>
-      <h3 className="text-lg font-semibold text-gray-700">Create New Income</h3>
-      <p className="text-sm text-gray-500 mt-1">Add income to your accounts</p>
+      <h3 className="text-lg font-semibold text-gray-700 text-center">Create New Income</h3>
+      <p className="text-sm text-gray-500 mt-1">Add income</p>
     </div>
   );
 
@@ -259,12 +259,12 @@ const IncomeManager = () => {
   return (
     <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col md:flex-row gap-3 justify-between md:items-center mb-4">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Income Manager</h1>
             <p className="text-gray-600">Manage accounts, categories, and income streams</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-col md:flex-row">
             <button
               onClick={() => setIsAccountDialogOpen(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
@@ -319,9 +319,9 @@ const IncomeManager = () => {
 
         {/* Filters */}
         <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
             <Filter className="text-gray-500" size={20} />
-            <div className="flex gap-4 flex-1">
+            <div className="flex gap-4 flex-1 flex-col md:flex-row">
               <div className="flex-1">
                 <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Account</label>
                 <select
@@ -337,9 +337,9 @@ const IncomeManager = () => {
               </div>
               <button
                 onClick={() => setFilters({ accountId: '' })}
-                className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 mt-6"
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold mt-6"
               >
-                Clear Filter
+                Clear
               </button>
             </div>
           </div>
@@ -352,11 +352,11 @@ const IncomeManager = () => {
             {accounts.map(account => {
               const categoriesCount = categories.filter(cat => cat.accountId === account.id).length;
               return (
-                <div key={account.id} className="p-4 border rounded-lg flex justify-between items-center">
+                <div key={account.id} className="p-4 border rounded-lg flex justify-between items-center sm:flex-row flex-col gap-4">
                   <div className="flex items-center gap-3">
                     <span className={`inline-block w-3 h-3 rounded-full ${getColorClass(account.color)}`}></span>
                     <div>
-                      <p className="font-medium">{account.name}</p>
+                      <p className="font-medium text-sm md:text-lg">{account.name}</p>
                       <p className="text-sm text-gray-500">{categoriesCount} categories</p>
                     </div>
                   </div>
@@ -380,11 +380,11 @@ const IncomeManager = () => {
               const account = getAccountById(category.accountId);
               const incomesCount = incomes.filter(income => income.categoryId === category.id).length;
               return (
-                <div key={category.id} className="p-4 border rounded-lg flex justify-between items-center">
+                <div key={category.id} className="p-4 border rounded-lg flex justify-between items-center gap-4 flex-col sm:flex-row">
                   <div className="flex items-center gap-3">
                     <span className={`inline-block w-3 h-3 rounded-full ${getColorClass(category.color)}`}></span>
                     <div>
-                      <p className="font-medium">{category.name}</p>
+                      <p className="font-medium text-sm md:text-lg">{category.name}</p>
                       <p className="text-sm text-gray-500">{account?.name} • {incomesCount} incomes</p>
                     </div>
                   </div>
