@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, DollarSign, TrendingUp, ArrowLeft, Pen, Trash, Target, Calendar, PieChart } from 'lucide-react';
+import { Plus, DollarSign, TrendingUp, ArrowLeft, Pen, Trash, Target, Calendar, PieChart, Filter } from 'lucide-react';
 
 const BudgetManager = () => {
   const [budgets, setBudgets] = useState([
@@ -10,7 +10,8 @@ const BudgetManager = () => {
       icon: '🛒',
       totalSpend: 320.50,
       totalItems: 8,
-      createdAt: '2025-08-01'
+      createdAt: '2025-08-01',
+      accountType: 'checking'
     },
     {
       id: 2,
@@ -19,7 +20,8 @@ const BudgetManager = () => {
       icon: '🚗',
       totalSpend: 280.75,
       totalItems: 12,
-      createdAt: '2025-08-01'
+      createdAt: '2025-08-01',
+      accountType: 'checking'
     },
     {
       id: 3,
@@ -28,7 +30,8 @@ const BudgetManager = () => {
       icon: '🎬',
       totalSpend: 150.25,
       totalItems: 5,
-      createdAt: '2025-08-01'
+      createdAt: '2025-08-01',
+      accountType: 'savings'
     },
     {
       id: 4,
@@ -37,7 +40,8 @@ const BudgetManager = () => {
       icon: '🏥',
       totalSpend: 85.00,
       totalItems: 2,
-      createdAt: '2025-08-01'
+      createdAt: '2025-08-01',
+      accountType: 'credit'
     }
   ]);
 
@@ -97,11 +101,13 @@ const BudgetManager = () => {
   const [isCreateBudgetOpen, setIsCreateBudgetOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
+  const [accountFilter, setAccountFilter] = useState('all');
   
   const [newBudget, setNewBudget] = useState({
     name: '',
     amount: '',
-    icon: '💰'
+    icon: '💰',
+    accountType: 'checking'
   });
 
   const [newExpense, setNewExpense] = useState({
@@ -109,6 +115,13 @@ const BudgetManager = () => {
     amount: '',
     description: ''
   });
+
+  const accountTypes = [
+    { value: 'checking', label: 'Checking Account', color: 'text-blue-600' },
+    { value: 'savings', label: 'Savings Account', color: 'text-green-600' },
+    { value: 'credit', label: 'Credit Card', color: 'text-purple-600' },
+    { value: 'cash', label: 'Cash', color: 'text-yellow-600' }
+  ];
 
   const emojis = [
     '💰', '🛒', '🚗', '🎬', '🏥', '🍔', '✈️', '🏠', '💡', '📱', 
@@ -132,6 +145,20 @@ const BudgetManager = () => {
       .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   };
 
+  const getAccountTypeLabel = (type) => {
+    const account = accountTypes.find(acc => acc.value === type);
+    return account ? account.label : type;
+  };
+
+  const getAccountTypeColor = (type) => {
+    const account = accountTypes.find(acc => acc.value === type);
+    return account ? account.color : 'text-gray-600';
+  };
+
+  const filteredBudgets = accountFilter === 'all' 
+    ? budgets 
+    : budgets.filter(budget => budget.accountType === accountFilter);
+
   const handleCreateBudget = () => {
     if (newBudget.name && newBudget.amount) {
       const budget = {
@@ -141,11 +168,12 @@ const BudgetManager = () => {
         icon: newBudget.icon,
         totalSpend: 0,
         totalItems: 0,
-        createdAt: new Date().toISOString().split('T')[0]
+        createdAt: new Date().toISOString().split('T')[0],
+        accountType: newBudget.accountType
       };
       
       setBudgets([...budgets, budget]);
-      setNewBudget({ name: '', amount: '', icon: '💰' });
+      setNewBudget({ name: '', amount: '', icon: '💰', accountType: 'checking' });
       setIsCreateBudgetOpen(false);
     }
   };
@@ -299,9 +327,12 @@ const BudgetManager = () => {
             </div>
           </div>
           
-          <div className="text-center">
+          <div className="flex justify-between items-center mt-2">
+            <span className={`text-xs font-medium px-2 py-1 rounded-full ${getAccountTypeColor(budget.accountType)} bg-opacity-20`}>
+              {getAccountTypeLabel(budget.accountType)}
+            </span>
             <p className="text-xs text-gray-500">
-              Created {new Date(budget.createdAt).toLocaleDateString()}
+              {new Date(budget.createdAt).toLocaleDateString()}
             </p>
           </div>
         </div>
@@ -340,6 +371,24 @@ const BudgetManager = () => {
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Budgets</h1>
             <p className="text-gray-600">Manage your spending categories and track expenses</p>
+            
+            {/* Account Filter */}
+            <div className="flex items-center gap-3 mt-4 mb-6">
+              <Filter size={20} className="text-gray-500" />
+              <span className="text-sm font-medium text-gray-700">Filter by account:</span>
+              <select 
+                value={accountFilter}
+                onChange={(e) => setAccountFilter(e.target.value)}
+                className="px-3 py-1 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Accounts</option>
+                {accountTypes.map(account => (
+                  <option key={account.value} value={account.value}>
+                    {account.label}
+                  </option>
+                ))}
+              </select>
+            </div>
             
             {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
@@ -392,7 +441,7 @@ const BudgetManager = () => {
           {/* Budget Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <CreateBudgetCard />
-            {budgets.map((budget) => (
+            {filteredBudgets.map((budget) => (
               <BudgetCard key={budget.id} budget={budget} />
             ))}
           </div>
@@ -446,6 +495,12 @@ const BudgetManager = () => {
                       }`}>
                         ${Math.abs(selectedBudget.amount - selectedBudget.totalSpend).toFixed(2)}
                         {selectedBudget.amount - selectedBudget.totalSpend < 0 && ' over'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Account:</span>
+                      <span className={`font-medium ${getAccountTypeColor(selectedBudget.accountType)}`}>
+                        {getAccountTypeLabel(selectedBudget.accountType)}
                       </span>
                     </div>
                   </div>
@@ -572,6 +627,21 @@ const BudgetManager = () => {
                   onChange={(e) => setNewBudget({ ...newBudget, amount: e.target.value })}
                 />
               </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Account Type</label>
+                <select
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={newBudget.accountType}
+                  onChange={(e) => setNewBudget({ ...newBudget, accountType: e.target.value })}
+                >
+                  {accountTypes.map(account => (
+                    <option key={account.value} value={account.value}>
+                      {account.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
             
             <div className="flex gap-3 mt-6">
@@ -580,7 +650,7 @@ const BudgetManager = () => {
                 onClick={() => {
                   setIsCreateBudgetOpen(false);
                   setIsEmojiPickerOpen(false);
-                  setNewBudget({ name: '', amount: '', icon: '💰' });
+                  setNewBudget({ name: '', amount: '', icon: '💰', accountType: 'checking' });
                 }}
               >
                 Cancel

@@ -8,6 +8,7 @@ import {
   Users, 
   LogOut,
   ArrowLeftRight,
+  Component,
   BookMarked,
   Command,
   Blend,
@@ -19,8 +20,10 @@ import {
   CircleDollarSign,
   X,
   Presentation,
+  MessageCircle,
   File,
-  Settings
+  Settings,
+  MonitorUp
 } from 'lucide-react';
 
 const SidebarLayout = ({ children }) => {
@@ -40,9 +43,9 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/user-management', icon: <Command size={20} />, label: 'User Management' },
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
-    { path: '/admin/analytics-insights', icon: <Bell size={20} />, label: 'Analytics Insights' },
-    { path: '/admin/feedback-support', icon: <Bell size={20} />, label: 'Feedback' },
-    { path: '/admin/content', icon: <Bell size={20} />, label: 'Content' },
+    { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
+    { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Feedback' },
+    { path: '/admin/content', icon: <MonitorUp size={20} />, label: 'Content' },
     // { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
