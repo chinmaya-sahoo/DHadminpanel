@@ -23,6 +23,7 @@ import {
   MessageCircle,
   File,
   Settings,
+  HandHelping,
   MonitorUp
 } from 'lucide-react';
 
@@ -46,6 +47,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
     { path: '/admin/feedback-support', icon: <MessageCircle size={20} />, label: 'Feedback' },
     { path: '/admin/content', icon: <MonitorUp size={20} />, label: 'Content' },
+    { path: '/admin/tnc', icon: <HandHelping size={20} />, label: 'Terms & Conditions' },
     // { path: '/admin/settings', icon: <Settings size={20} />, label: 'Settings' },
   ];
 
