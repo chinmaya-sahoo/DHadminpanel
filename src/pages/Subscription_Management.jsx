@@ -229,8 +229,8 @@ const CouponManagement = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">🎁 Coupon Management</h2>
+      <div className="flex justify-between items-center gap-3 flex-col md:flex-row">
+        <h2 className="text-xl text-center font-semibold">Coupon Management</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2"
@@ -731,7 +731,9 @@ export default function SubscriptionManagement() {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <h1 className="text-3xl font-bold text-gray-800">💳 Subscription Management</h1>
+          <h1 className="text-3xl gap-3 items-center font-bold text-gray-800">
+              Subscription Management
+          </h1>
           <p className="text-gray-600 mt-1">Manage all subscription-related activities</p>
         </div>
       </div>
@@ -751,7 +753,7 @@ export default function SubscriptionManagement() {
 
             {/* Tab Navigation */}
             <div className="flex-1 mx-2 sm:mx-4">
-              <div className="flex flex-wrap sm:flex-nowrap overflow-x-auto scrollbar-hide gap-1 sm:gap-2">
+              <div className="flex flex-wrap lg:flex-nowrap overflow-x-hidden gap-1 sm:gap-2">
                 {tabs.map((tab, index) => (
                   <button
                     key={index}

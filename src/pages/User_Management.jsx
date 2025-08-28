@@ -753,9 +753,9 @@ export default function UserManagement() {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">User Management</h1>
-        <div className="flex gap-2">
+      <div className="flex flex-col md:flex-row gap-3 justify-between items-center mb-6">
+        <h1 className="text-3xl text-center font-bold">User Management</h1>
+        <div className="flex flex-col md:flex-row gap-2">
           <button
             onClick={() => setAddModal({ open: true })}
             className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
@@ -784,20 +784,20 @@ export default function UserManagement() {
               className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2">
             <button
               onClick={() => setShowAdvancedFilter(!showAdvancedFilter)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                 showAdvancedFilter ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"
               }`}
             >
-              <Filter size={18} /> Advanced Filter
+              <Filter size={18} /> Filter
             </button>
             <button
               onClick={clearFilters}
               className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors"
             >
-              Clear All
+              Clear
             </button>
           </div>
         </div>
