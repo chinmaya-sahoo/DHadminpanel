@@ -339,12 +339,12 @@ const Feedback_Support = () => {
       )}
 
       {/* Route Status Indicator */}
-      <div className="mb-4 p-3 bg-white rounded-lg shadow-sm border-l-4 border-blue-500">
+      {/* <div className="mb-4 p-3 bg-white rounded-lg shadow-sm border-l-4 border-blue-500">
         <div className="flex items-center gap-2">
           <div className={`w-3 h-3 rounded-full ${isOnFeedbackRoute ? 'bg-green-500' : 'bg-gray-400'}`}></div>
           <span className="text-sm font-medium">
-            {/* Current Route:  */}
-            {/* {isOnFeedbackRoute ? '/admin/feedback-support' : 'Other Route'} */}
+            Current Route: 
+            {isOnFeedbackRoute ? '/admin/feedback-support' : 'Other Route'}
           </span>
           {isOnFeedbackRoute && (
             <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
@@ -352,12 +352,12 @@ const Feedback_Support = () => {
             </span>
           )}
         </div>
-      </div>
+      </div> */}
 
       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
         <MessageSquare className="text-blue-600" /> Feedback & Support
         {stats.unread > 0 && (
-          <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+          <span className="bg-red-500 text-center text-white text-xs px-2 py-1 rounded-full">
             {stats.unread} new
           </span>
         )}

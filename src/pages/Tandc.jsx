@@ -94,7 +94,7 @@ const TandCManager = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex border-b mb-6">
+      <div className="flex border-b mb-6 overflow-x-scroll md:overflow-x-auto">
         <button
           className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${
             activeTab === 'terms'

@@ -55,29 +55,29 @@ const Content = () => {
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6">📑 Content Management</h2>
+      <h2 className="text-2xl font-bold mb-6">Content Management</h2>
 
       {/* Banner Management */}
       <div className="bg-white shadow rounded-lg p-4 mb-8">
         <h3 className="text-xl font-semibold mb-4">📢 In-App Banners</h3>
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 flex-col md:flex-row mb-4">
           <input
             type="text"
             placeholder="Enter banner text"
-            className="border p-2 rounded w-1/3"
+            className="border p-2 rounded"
             value={newBanner.text}
             onChange={(e) => setNewBanner({ ...newBanner, text: e.target.value })}
           />
           <input
             type="url"
             placeholder="Enter image URL"
-            className="border p-2 rounded w-1/2"
+            className="border p-2 rounded "
             value={newBanner.url}
             onChange={(e) => setNewBanner({ ...newBanner, url: e.target.value })}
           />
           <button
             onClick={addBanner}
-            className="bg-blue-500 text-white px-3 py-2 rounded flex items-center gap-1"
+            className="bg-blue-500 text-white px-3 py-2 rounded flex justify-center items-center gap-1"
           >
             <Plus size={16} /> Add
           </button>
@@ -105,11 +105,11 @@ const Content = () => {
       {/* Tutorial Management */}
       <div className="bg-white shadow rounded-lg p-4 mb-8">
         <h3 className="text-xl font-semibold mb-4">🎥 Tutorials</h3>
-        <div className="flex gap-2 mb-4">
+        <div className="flex gap-2 flex-col md:flex-row mb-4">
           <input
             type="text"
             placeholder="Enter tutorial title"
-            className="border p-2 rounded w-1/4"
+            className="border p-2 rounded "
             value={newTutorial.title}
             onChange={(e) => setNewTutorial({ ...newTutorial, title: e.target.value })}
           />
@@ -124,24 +124,24 @@ const Content = () => {
           <input
             type="url"
             placeholder="Enter video URL"
-            className="border p-2 rounded w-1/2"
+            className="border p-2 rounded "
             value={newTutorial.url}
             onChange={(e) => setNewTutorial({ ...newTutorial, url: e.target.value })}
           />
           <button
             onClick={addTutorial}
-            className="bg-blue-500 text-white px-3 py-2 rounded flex items-center gap-1"
+            className="bg-blue-500 text-white px-3 py-2 rounded flex justify-center items-center gap-1"
           >
             <Plus size={16} /> Add
           </button>
         </div>
         <ul>
           {tutorials.map((t) => (
-            <li key={t.id} className="flex justify-between items-center border-b py-2">
+            <li key={t.id} className="flex justify-between items-center flex-wrap gap-3 border-b py-2">
               <span>
                 <b>{t.title}</b> ({t.lang}): {t.url}
               </span>
-              <button onClick={() => deleteTutorial(t.id)}>
+              <button onClick={() => deleteTutorial(t.id)} className="w-full md:w-auto flex justify-center items-center">
                 <Trash2 className="text-red-500" />
               </button>
             </li>

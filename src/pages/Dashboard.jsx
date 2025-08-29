@@ -293,7 +293,7 @@ export default function Dashboard() {
             <Line type="monotone" dataKey="upgrades" stroke="#4ade80" strokeWidth={3} name="Upgrades" />
             <Line type="monotone" dataKey="revenue" stroke="#f59e0b" strokeWidth={3} name="Revenue" />
             <Line type="monotone" dataKey="uninstalls" stroke="#f87171" strokeWidth={3} name="Uninstalls" />
-            <Legend />
+            <Legend className="mt-10" />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -320,7 +320,7 @@ export default function Dashboard() {
                   ))}
                 </Pie>
                 <Tooltip />
-                <Legend />
+                <Legend className="mt-4"/>
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -373,16 +373,16 @@ export default function Dashboard() {
           <table className="w-full">
             <thead>
               <tr className="border-b">
-                <th className="text-left py-2">Subject</th>
-                <th className="text-left py-2">Priority</th>
-                <th className="text-left py-2">Status</th>
-                <th className="text-left py-2">User</th>
-                <th className="text-left py-2">Created</th>
+                <th className="text-left py-2 pr-10">Subject</th>
+                <th className="text-left py-2 pr-10">Priority</th>
+                <th className="text-left py-2 pr-10">Status</th>
+                <th className="text-left py-2 pr-10">User</th>
+                <th className="text-left py-2 pr-10">Created</th>
               </tr>
             </thead>
             <tbody>
               {supportTickets.map((ticket) => (
-                <tr key={ticket.id} className="border-b hover:bg-gray-50">
+                <tr key={ticket.id} className="border-b pr-10 hover:bg-gray-50">
                   <td className="py-3 font-medium">{ticket.subject}</td>
                   <td className="py-3">
                     <span className={`px-2 py-1 rounded-full text-xs ${
@@ -488,7 +488,7 @@ export function AnalyticsOverview() {
     <div className="bg-white rounded-2xl shadow-md p-6">
       <div className="flex justify-between items-center mb-6 gap-3">
         <h3 className="text-lg font-semibold">Analytics Overview</h3>
-        <div className="flex gap-2 items-center overflow-x-scroll">
+        <div className="flex gap-2 items-center overflow-x-scroll md:overflow-x-auto">
           {["daily", "weekly", "monthly"].map((p) => (
             <button
               key={p}

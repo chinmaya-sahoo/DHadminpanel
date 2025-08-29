@@ -45,7 +45,7 @@ const Login = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white bg-opacity-20 rounded-full mb-4">
               <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-12 h-12 rounded-full shadow" />
             </div>
-            <h1 className="text-2xl font-bold text-white mb-2"> Daily Hisabko Admin</h1>
+            <h1 className="text-2xl font-bold text-white mb-2"> Daily Hisab Admin</h1>
             <p className="text-blue-100">Sign in to manage your store</p>
           </div>
 
