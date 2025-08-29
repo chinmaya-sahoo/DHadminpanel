@@ -8,38 +8,36 @@ const config = {
   // API endpoints
   API_ENDPOINTS: {
     AUTH: '/api/auth',
-    CART: '/api/cart',
-    SHOP: '/api/shop',
-    ORDERS: '/api/orders',
-    CATEGORIES: '/api/categories',
-    FEATURED_PRODUCTS: '/api/featured-products',
-    BESTSELLER: '/api/bestseller',
-    LOVED: '/api/loved',
-    HERO_CAROUSEL: '/api/hero-carousel',
-    SELLER: '/api/seller',
+    USER: '/api/user',
+    BUSINESS: '/api/business',
+    REPORT: '/api/report',
+    INCOME: '/api/income',
+    EXPENSE: '/api/expense',
+    UDHARI: '/api/udhari',
+    CONTENT: '/api/content',
+    NOTIFICATION: '/api/notification',
+    SUBSCRIPTION: '/api/subscription',
+    STOCK: '/api/stock',
     DATA: '/api/data',
     DATA_PAGE: '/api/data-page',
-    WITHDRAWAL: '/api/withdrawal',
-    COMMISSION: '/api/commission'
   },
   
   // Full API URLs (constructed from base URL and endpoints)
   get API_URLS() {
     return {
       AUTH: `${this.API_BASE_URL}${this.API_ENDPOINTS.AUTH}`,
-      CART: `${this.API_BASE_URL}${this.API_ENDPOINTS.CART}`,
-      SHOP: `${this.API_BASE_URL}${this.API_ENDPOINTS.SHOP}`,
-      ORDERS: `${this.API_BASE_URL}${this.API_ENDPOINTS.ORDERS}`,
-      CATEGORIES: `${this.API_BASE_URL}${this.API_ENDPOINTS.CATEGORIES}`,
-      FEATURED_PRODUCTS: `${this.API_BASE_URL}${this.API_ENDPOINTS.FEATURED_PRODUCTS}`,
-      BESTSELLER: `${this.API_BASE_URL}${this.API_ENDPOINTS.BESTSELLER}`,
-      LOVED: `${this.API_BASE_URL}${this.API_ENDPOINTS.LOVED}`,
-      HERO_CAROUSEL: `${this.API_BASE_URL}${this.API_ENDPOINTS.HERO_CAROUSEL}`,
-      SELLER: `${this.API_BASE_URL}${this.API_ENDPOINTS.SELLER}`,
+      USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.USER}`,
+      BUSINESS: `${this.API_BASE_URL}${this.API_ENDPOINTS.BUSINESS}`,
+      REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.REPORT}`,
+      INCOME: `${this.API_BASE_URL}${this.API_ENDPOINTS.INCOME}`,
+      EXPENSE: `${this.API_BASE_URL}${this.API_ENDPOINTS.EXPENSE}`,
+      UDHARI: `${this.API_BASE_URL}${this.API_ENDPOINTS.UDHARI}`,
+      CONTENT: `${this.API_BASE_URL}${this.API_ENDPOINTS.CONTENT}`,
+      NOTIFICATION: `${this.API_BASE_URL}${this.API_ENDPOINTS.NOTIFICATION}`,
+      SUBSCRIPTION: `${this.API_BASE_URL}${this.API_ENDPOINTS.SUBSCRIPTION}`,
+      STOCK: `${this.API_BASE_URL}${this.API_ENDPOINTS.STOCK}`,
       DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.DATA}`,
       DATA_PAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.DATA_PAGE}`,
-      WITHDRAWAL: `${this.API_BASE_URL}${this.API_ENDPOINTS.WITHDRAWAL}`,
-      COMMISSION: `${this.API_BASE_URL}${this.API_ENDPOINTS.COMMISSION}`
     };
   },
   
