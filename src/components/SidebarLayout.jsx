@@ -2,30 +2,21 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
-  ShoppingBag, 
-  Package,
   PiggyBank,
   Users, 
   LogOut,
-  ArrowLeftRight,
   Component,
   BookMarked,
   Command,
-  Blend,
-  IndianRupee,
-  Tag,
-  Store,
   Menu,
   Bell,
   CircleDollarSign,
   X,
-  Presentation,
   MessageCircle,
-  File,
-  Settings,
   HandHelping,
   MonitorUp
 } from 'lucide-react';
+import apiService from "../services/api";
 
 const SidebarLayout = ({ children }) => {
   const location = useLocation();
@@ -52,9 +43,7 @@ const SidebarLayout = ({ children }) => {
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_logged_in');
-    localStorage.removeItem('token');
-    window.location.href = '/admin/login';
+    apiService.logout()
   };
 
   return (

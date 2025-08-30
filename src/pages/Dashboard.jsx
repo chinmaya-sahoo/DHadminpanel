@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import { useState , useEffect } from "react";
 import {
   ArrowRight,
   TrendingUp,
-  TrendingDown,
   Wallet,
   Users,
   Download,
-  Upload,
   Headphones,
   UserPlus,
-  Calendar,
-  Filter,
-  Eye,
   X,
 } from "lucide-react";
 import {
@@ -28,9 +23,8 @@ import {
   Legend,
   AreaChart,
   Area,
-  BarChart,
-  Bar,
 } from "recharts";
+import apiService from "../services/api";
 
 // Enhanced sample data for trend analysis
 const trendData = [
@@ -84,13 +78,13 @@ const supportTickets = [
 ];
 
 // Recent subscribers data
-const recentSubscribers = [
-  { id: 1, name: "Alex Johnson", email: "alex@example.com", plan: "Premium", joined: "2 hours ago", revenue: "₹999" },
-  { id: 2, name: "Emma Wilson", email: "emma@example.com", plan: "Pro", joined: "4 hours ago", revenue: "₹1,999" },
-  { id: 3, name: "David Chen", email: "david@example.com", plan: "Premium", joined: "6 hours ago", revenue: "₹999" },
-  { id: 4, name: "Sophie Brown", email: "sophie@example.com", plan: "Enterprise", joined: "8 hours ago", revenue: "₹4,999" },
-  { id: 5, name: "Ryan Davis", email: "ryan@example.com", plan: "Pro", joined: "12 hours ago", revenue: "₹1,999" },
-];
+// const recentSubscribers = [
+//   { id: 1, name: "Alex Johnson", email: "alex@example.com", plan: "Premium", joined: "2 hours ago", revenue: "₹999" },
+//   { id: 2, name: "Emma Wilson", email: "emma@example.com", plan: "Pro", joined: "4 hours ago", revenue: "₹1,999" },
+//   { id: 3, name: "David Chen", email: "david@example.com", plan: "Premium", joined: "6 hours ago", revenue: "₹999" },
+//   { id: 4, name: "Sophie Brown", email: "sophie@example.com", plan: "Enterprise", joined: "8 hours ago", revenue: "₹4,999" },
+//   { id: 5, name: "Ryan Davis", email: "ryan@example.com", plan: "Pro", joined: "12 hours ago", revenue: "₹1,999" },
+// ];
 
 // Mock detailed user lists
 const freeUsers = Array.from({ length: 50 }, (_, i) => ({
@@ -129,10 +123,26 @@ export default function Dashboard() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [userModalType, setUserModalType] = useState("");
   const [dateRange, setDateRange] = useState("7days");
+  const [recentSubscribers, setRecentSubscribers] = useState({ data: [], isLoading: false });
 
   const { users, installs, revenue, change } = activityStats[period];
   const totalActiveUsers = userDistribution.slice(0, 2).reduce((sum, user) => sum + user.value, 0);
   const pendingTickets = supportTickets.filter(t => t.status === "Open").length;
+
+  useEffect(() => {
+  setRecentSubscribers(prev => ({ ...prev, isLoading: true }));
+
+  apiService.get("/api/subscription/subscription/")
+    .then((res) => {
+      setRecentSubscribers(prev => ({ ...prev, data: res.data }));
+    })
+    .catch((err) => {
+      console.error(err.response?.data || err.message);
+    })
+    .finally(() => {
+      setRecentSubscribers(prev => ({ ...prev, isLoading: false }));
+    });
+}, []);
 
   const getCurrentData = () => {
     switch(period) {
@@ -272,7 +282,7 @@ export default function Dashboard() {
           <UserPlus className="w-10 h-10 text-blue-500" />
           <div>
             <p className="text-gray-500 text-sm">New Subscribers (24h)</p>
-            <h2 className="text-2xl font-bold">{recentSubscribers.length}</h2>
+            <h2 className="text-2xl font-bold">{recentSubscribers.data.length}</h2>
           </div>
         </div>
       </div>
@@ -423,7 +433,7 @@ export default function Dashboard() {
           </button>
         </div>
         <div className="space-y-3">
-          {recentSubscribers.map((subscriber) => (
+          {recentSubscribers.data.map((subscriber) => (
             <div key={subscriber.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div>
                 <p className="font-medium">{subscriber.name}</p>

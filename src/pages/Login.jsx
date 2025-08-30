@@ -1,4 +1,3 @@
-// pages/Login.jsx
 import React, { useState, useEffect } from "react";
 import apiService from "../services/api";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,8 @@ import { Lock, User, Eye, EyeOff, AlertCircle } from "lucide-react";
 import config from "../config/config.js";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  // Changed state variable from email to username
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -26,15 +26,15 @@ const Login = () => {
     setLoading(true);
 
     // Basic validation
-    if (!email || !password) {
+    if (!username || !password) {
       setError(config.ERRORS.REQUIRED_FIELDS);
       setLoading(false);
       return;
     }
 
     try {
-      // Fixed: use email instead of undefined username
-      const result = await apiService.login(email, password);
+      // Pass the username and password to the API service
+      const result = await apiService.login(username, password);
       
       if (result.success) {
         // Redirect to dashboard on successful login
@@ -48,9 +48,9 @@ const Login = () => {
     }
   };
 
-  // Handle form input changes
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  // Handle form input changes for username
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
     if (error) setError(""); // Clear error when user starts typing
   };
 
@@ -101,13 +101,13 @@ const Login = () => {
                 </div>
               )}
 
-              {/* Email Field */}
+              {/* Username Field */}
               <div className="space-y-2">
                 <label
-                  htmlFor="email"
+                  htmlFor="username" // Changed htmlFor attribute
                   className="block text-sm font-semibold text-gray-700"
                 >
-                  Email Address
+                  Username
                 </label>
                 <div className="relative">
                   <User
@@ -115,17 +115,17 @@ const Login = () => {
                     size={20}
                   />
                   <input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
+                    id="username" // Changed id attribute
+                    type="text"
+                    placeholder="Enter your username" // Changed placeholder text
                     className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
                       error ? 'border-red-300' : 'border-gray-200'
                     }`}
-                    value={email}
-                    onChange={handleEmailChange}
+                    value={username}
+                    onChange={handleUsernameChange} // Changed onChange handler
                     required
                     disabled={loading}
-                    autoComplete="email"
+                    autoComplete="username" // Changed autocomplete attribute
                   />
                 </div>
               </div>

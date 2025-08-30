@@ -1,3 +1,4 @@
+// app.jsx
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
@@ -5,7 +6,6 @@ import Login from "./pages/Login";
 import SidebarLayout from "./components/SidebarLayout";
 import ErrorBoundary from './components/ErrorBoundary';
 import Settings from './pages/Settings';
-import apiService from './services/api';
 import Transaction from "./pages/Transaction";
 import Income from "./pages/Income";
 import Expense from "./pages/Expense";
@@ -21,8 +21,8 @@ import Analytics_Insights from "./pages/Analytics_Insights";
 import Feedback_Support from "./pages/Feedback_Support";
 import Content from "./pages/Content";
 import Tandc from "./pages/Tandc";
+import apiService from './services/api';
 
-// Loading component
 const LoadingSpinner = ({ message = "Loading..." }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="text-center">
@@ -32,59 +32,77 @@ const LoadingSpinner = ({ message = "Loading..." }) => (
   </div>
 );
 
-// Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const [authState, setAuthState] = useState({ isValidating: true, isAuthenticated: false, error: null });
-  useEffect(() => { 
-    const validateAuthentication = async () => { 
+  const [authState, setAuthState] = useState({ isChecking: true, isAuthenticated: false });
+
+  useEffect(() => {
+    let isMounted = true;
+    const validate = async () => {
       try {
-         if (!apiService.isAuthenticated()) {
-           setAuthState({ isValidating: false, isAuthenticated: false, error: null });
-           return;
-           } 
-           await apiService.verifyToken();
-           setAuthState({ isValidating: false, isAuthenticated: true, error: null });
-           } 
-      catch (error) {
-         console.error('Authentication validation failed:', error);
-          try { await apiService.logout(); } catch (logoutError) {
-             console.error('Logout during validation failed:', logoutError); 
-            }
-           setAuthState({ isValidating: false, isAuthenticated: false, error: error.message });
-           } };
-           validateAuthentication(); 
-          }, []);
-  if (authState.isValidating) return <LoadingSpinner message="Validating authentication..." />;
-  if (!authState.isAuthenticated) return <Navigate to="/admin/login" replace />;
+        if (!apiService.isAuthenticated()) {
+          if (isMounted) setAuthState({ isChecking: false, isAuthenticated: false });
+          return;
+        }
+        await apiService.verifyAuth();
+        if (isMounted) setAuthState({ isChecking: false, isAuthenticated: true });
+      } catch (err) {
+        await apiService.logout();
+        if (isMounted) setAuthState({ isChecking: false, isAuthenticated: false });
+      }
+    };
+    validate();
+    return () => { isMounted = false; };
+  }, []);
+
+  if (authState.isChecking) return <LoadingSpinner message="Validating authentication..." />;
+  
+  if (!authState.isAuthenticated) {
+    return <Navigate to="/admin/login" replace />; // Use Navigate for redirects
+  }
+
   return <SidebarLayout>{children}</SidebarLayout>;
 };
 
-// Public Route Component
 const PublicRoute = ({ children }) => {
-  const [isChecking, setIsChecking] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  useEffect(() => { const checkAuth = async () => { if (apiService.isAuthenticated()) { try { await apiService.verifyToken(); setIsAuthenticated(true); } catch (error) { await apiService.logout(); setIsAuthenticated(false); } } else { setIsAuthenticated(false); } setIsChecking(false); }; checkAuth(); }, []);
-  if (isChecking) return <LoadingSpinner message="Checking authentication..." />;
-  if (isAuthenticated) return <Navigate to="/admin/dashboard" replace />;
+  const [authState, setAuthState] = useState({ isChecking: true, isAuthenticated: false });
+
+  useEffect(() => {
+    let isMounted = true;
+    const checkAuth = async () => {
+      if (apiService.isAuthenticated()) {
+        try {
+          await apiService.verifyAuth();
+          if (isMounted) setAuthState({ isChecking: false, isAuthenticated: true });
+        } catch (err) {
+          await apiService.logout();
+          if (isMounted) setAuthState({ isChecking: false, isAuthenticated: false });
+        }
+      } else {
+        if (isMounted) setAuthState({ isChecking: false, isAuthenticated: false });
+      }
+    };
+    checkAuth();
+    return () => { isMounted = false; };
+  }, []);
+
+  if (authState.isChecking) return <LoadingSpinner message="Checking authentication..." />;
+  
+  if (authState.isAuthenticated) {
+    return <Navigate to="/admin/dashboard" replace />; // Use Navigate for redirects
+  }
+
   return children;
 };
 
-// App initialization hook
-const useAppInitialization = () => {
-  const [isInitialized, setIsInitialized] = useState(false);
-  useEffect(() => { apiService.initialize(); setIsInitialized(true); }, []);
-  return isInitialized;
-};
-
 const App = () => {
-  const isInitialized = useAppInitialization();
-  if (!isInitialized) return <LoadingSpinner message="Initializing application..." />;
-
   return (
     <ErrorBoundary>
       <Router>
         <Routes>
+          {/* Public route */}
           <Route path="/admin/login" element={<PublicRoute><Login /></PublicRoute>} />
+
+          {/* Protected routes */}
           <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
@@ -103,6 +121,8 @@ const App = () => {
           <Route path="/admin/feedback-support" element={<ProtectedRoute><Feedback_Support /></ProtectedRoute>} />
           <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
           <Route path="/admin/tnc" element={<ProtectedRoute><Tandc /></ProtectedRoute>} />
+
+          {/* Default fallback */}
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>
       </Router>

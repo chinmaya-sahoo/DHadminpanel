@@ -1,16 +1,12 @@
 // Configuration file for API endpoints and environment settings
-// Change this single URL to update all API calls across the admin panel
 
 const config = {
-  // API Configuration
-  API_BASE_URL:'http://127.0.0.1:8000/',
-  
+  // API Base URL
+  API_BASE_URL: import.meta.env.VITE_API_BASE_URL,
+
   // API endpoints
   API_ENDPOINTS: {
-    AUTH: '/api/auth',
-    LOGIN: '/api/auth/login',          // Added
-    VERIFY_TOKEN: '/api/auth/verify',  // Added
-    LOGOUT: '/api/auth/logout',        // Added
+    PROFILE: '/api/settings/profile/', // used for login check
     USER: '/api/user',
     BUSINESS: '/api/business',
     REPORT: '/api/report',
@@ -24,14 +20,11 @@ const config = {
     DATA: '/api/data',
     DATA_PAGE: '/api/data-page',
   },
-  
+
   // Full API URLs (constructed from base URL and endpoints)
   get API_URLS() {
     return {
-      AUTH: `${this.API_BASE_URL}${this.API_ENDPOINTS.AUTH}`,
-      LOGIN: `${this.API_BASE_URL}${this.API_ENDPOINTS.LOGIN}`,
-      VERIFY_TOKEN: `${this.API_BASE_URL}${this.API_ENDPOINTS.VERIFY_TOKEN}`,
-      LOGOUT: `${this.API_BASE_URL}${this.API_ENDPOINTS.LOGOUT}`,
+      PROFILE: `${this.API_BASE_URL}${this.API_ENDPOINTS.PROFILE}`,
       USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.USER}`,
       BUSINESS: `${this.API_BASE_URL}${this.API_ENDPOINTS.BUSINESS}`,
       REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.REPORT}`,
@@ -46,46 +39,19 @@ const config = {
       DATA_PAGE: `${this.API_BASE_URL}${this.API_ENDPOINTS.DATA_PAGE}`,
     };
   },
-  
-  // Utility function to fix image URLs
-  fixImageUrl: (imagePath) => {
-    if (!imagePath) return '';
-    
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
-      return imagePath;
-    }
-    
-    const cleanPath = imagePath.replace(/^\/+/, '');
-    
-    if (cleanPath.includes('abc.com') || !cleanPath.includes('/')) {
-      const basePath = cleanPath.startsWith('pawnbackend/data/') ? '' : 'pawnbackend/data/';
-      return `${config.API_BASE_URL}/${basePath}${cleanPath}`;
-    }
-    
-    return `/${cleanPath}`;
-  },
-  
+
   // Environment settings
   ENVIRONMENT: {
     IS_PRODUCTION: process.env.NODE_ENV === 'production',
     IS_DEVELOPMENT: process.env.NODE_ENV === 'development',
   },
-  
+
   // CORS settings
   CORS: {
-    WITH_CREDENTIALS: true,
+    WITH_CREDENTIALS: false, // not needed for BasicAuth
     HEADERS: {
       'Content-Type': 'application/json',
     },
-  },
-
-  // Authentication Configuration
-  AUTH: {
-    TOKEN_KEY: 'auth_token',
-    ADMIN_FLAG: 'admin_logged_in',        // Added
-    REFRESH_TOKEN_KEY: 'refresh_token',
-    TOKEN_EXPIRY: '1d',
-    STORAGE_TYPE: 'localStorage',         // Added
   },
 
   // File Upload Configuration
@@ -106,13 +72,8 @@ const config = {
   // Error Messages
   ERRORS: {
     UNAUTHORIZED: 'You are not authorized to perform this action',
-    INVALID_TOKEN: 'Invalid or expired token',
     INVALID_CREDENTIALS: 'Invalid email or password',
     SERVER_ERROR: 'An error occurred on the server',
-    VALIDATION_ERROR: 'Please check your input and try again',
-    FILE_TOO_LARGE: 'File size is too large',
-    INVALID_FILE_TYPE: 'Invalid file type',
-    REQUIRED_FIELDS: 'Please fill in all required fields',
     NETWORK_ERROR: 'Network connection error. Please try again.',
   },
 };
