@@ -12,6 +12,7 @@ import {
   AlertCircle,
   CheckCircle,
   XCircle,
+  Download,
 } from "lucide-react";
 import {
   PieChart,
@@ -113,6 +114,45 @@ const incomeData = [
 
 const COLORS = ["#4ade80", "#60a5fa", "#f87171", "#facc15", "#a78bfa"];
 
+// Function to convert array of objects to CSV
+const convertToCSV = (data, filename) => {
+  if (data.length === 0) return;
+  
+  const headers = Object.keys(data[0]).join(',');
+  const rows = data.map(obj => 
+    Object.values(obj).map(value => 
+      typeof value === 'string' && value.includes(',') ? `"${value}"` : value
+    ).join(',')
+  );
+  
+  const csvContent = [headers, ...rows].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  
+  link.setAttribute('href', url);
+  link.setAttribute('download', `${filename}.csv`);
+  link.style.visibility = 'hidden';
+  
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+// Function to export all data
+const exportAllData = () => {
+  convertToCSV(userGrowthData, 'user_growth_data');
+  setTimeout(() => convertToCSV(userActivityData, 'user_activity_data'), 100);
+  setTimeout(() => convertToCSV(subscriptionRevenueData, 'subscription_revenue_data'), 200);
+  setTimeout(() => convertToCSV(businessHealthData, 'business_health_data'), 300);
+  setTimeout(() => convertToCSV(dailySummaryData, 'daily_summary_data'), 400);
+  setTimeout(() => convertToCSV(weeklySummaryData, 'weekly_summary_data'), 500);
+  setTimeout(() => convertToCSV(monthlySummaryData, 'monthly_summary_data'), 600);
+  setTimeout(() => convertToCSV(expenseData, 'expense_data'), 700);
+  setTimeout(() => convertToCSV(incomeData, 'income_data'), 800);
+};
+
 export default function Report() {
   const [creditScore, setCreditScore] = useState(0);
   const [summaryPeriod, setSummaryPeriod] = useState("monthly");
@@ -142,6 +182,17 @@ export default function Report() {
 
   return (
     <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+      {/* Export Button */}
+      <div className="flex justify-end">
+        <button
+          onClick={exportAllData}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Download size={18} />
+          Export All Data (CSV)
+        </button>
+      </div>
+
       {/* User Growth Report */}
       <div className="bg-white rounded-2xl shadow-md p-6">
         <h3 className="text-lg font-semibold flex items-center gap-2 mb-4">
@@ -486,3 +537,18 @@ export default function Report() {
     </div>
   );
 }
+
+// Export function for external use
+export { 
+  userGrowthData, 
+  userActivityData, 
+  subscriptionRevenueData, 
+  businessHealthData, 
+  dailySummaryData, 
+  weeklySummaryData, 
+  monthlySummaryData, 
+  expenseData, 
+  incomeData,
+  convertToCSV,
+  exportAllData
+};
