@@ -1,77 +1,16 @@
-import React, { useState } from 'react';
+// File: src/components/IncomeManager.jsx
+import React, { useState, useEffect } from 'react';
 import { Plus, DollarSign, TrendingUp, Filter, Trash2, Tag, CreditCard } from 'lucide-react';
 
-const IncomeManager = () => {
-  const [accounts, setAccounts] = useState([
-    { id: 1, name: 'Personal', color: 'blue' },
-    { id: 2, name: 'Business', color: 'green' },
-    { id: 3, name: 'Investment', color: 'purple' },
-    { id: 4, name: 'Savings', color: 'indigo' }
-  ]);
-
-  // Sample categories data
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Salary', color: 'blue', accountId: 1 },
-    { id: 2, name: 'Freelance', color: 'green', accountId: 1 },
-    { id: 3, name: 'Business Revenue', color: 'indigo', accountId: 2 },
-    { id: 4, name: 'Consulting', color: 'purple', accountId: 2 },
-    { id: 5, name: 'Dividends', color: 'pink', accountId: 3 },
-    { id: 6, name: 'Capital Gains', color: 'yellow', accountId: 3 }
-  ]);
-
-  // Sample income data
-  const [incomes, setIncomes] = useState([
-    {
-      id: 1,
-      name: 'Monthly Salary',
-      amount: 5000,
-      totalSpend: 3200,
-      totalItems: 12,
-      accountId: 1,
-      categoryId: 1,
-      date: '2024-08-25'
-    },
-    {
-      id: 2,
-      name: 'Website Project',
-      amount: 2000,
-      totalSpend: 1500,
-      totalItems: 8,
-      accountId: 1,
-      categoryId: 2,
-      date: '2024-08-24'
-    },
-    {
-      id: 3,
-      name: 'Q3 Dividends',
-      amount: 800,
-      totalSpend: 0,
-      totalItems: 0,
-      accountId: 3,
-      categoryId: 5,
-      date: '2024-08-23'
-    },
-    {
-      id: 4,
-      name: 'App Development',
-      amount: 3500,
-      totalSpend: 2100,
-      totalItems: 15,
-      accountId: 2,
-      categoryId: 3,
-      date: '2024-08-22'
-    },
-    {
-      id: 5,
-      name: 'Strategy Consulting',
-      amount: 1200,
-      totalSpend: 800,
-      totalItems: 5,
-      accountId: 2,
-      categoryId: 4,
-      date: '2024-08-21'
-    }
-  ]);
+const IncomeManager = ({ 
+  accountType = null, 
+  initialAccounts = [], 
+  initialCategories = [], 
+  initialIncomes = [] 
+}) => {
+  const [accounts, setAccounts] = useState(initialAccounts);
+  const [categories, setCategories] = useState(initialCategories);
+  const [incomes, setIncomes] = useState(initialIncomes);
 
   // Dialog states
   const [isIncomeDialogOpen, setIsIncomeDialogOpen] = useState(false);
@@ -82,14 +21,14 @@ const IncomeManager = () => {
   const [newIncome, setNewIncome] = useState({
     name: '',
     amount: '',
-    accountId: '',
+    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '',
     categoryId: ''
   });
 
   const [newCategory, setNewCategory] = useState({
     name: '',
     color: 'blue',
-    accountId: ''
+    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : ''
   });
 
   const [newAccount, setNewAccount] = useState({
@@ -97,10 +36,23 @@ const IncomeManager = () => {
     color: 'blue'
   });
 
-  // Filter states
+  // Filter states - preset with accountType if provided
   const [filters, setFilters] = useState({
-    accountId: ''
+    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : ''
   });
+
+  // Update states when props change
+  useEffect(() => {
+    setAccounts(initialAccounts);
+  }, [initialAccounts]);
+
+  useEffect(() => {
+    setCategories(initialCategories);
+  }, [initialCategories]);
+
+  useEffect(() => {
+    setIncomes(initialIncomes);
+  }, [initialIncomes]);
 
   // Helper functions
   const getAccountById = (id) => accounts.find(acc => acc.id === id);
@@ -108,6 +60,10 @@ const IncomeManager = () => {
 
   const getFilteredIncomes = () => {
     return incomes.filter(income => {
+      if (accountType) {
+        const account = accounts.find(acc => acc.id === income.accountId);
+        return account?.name === accountType;
+      }
       if (!filters.accountId) return true;
       return income.accountId === parseInt(filters.accountId);
     });
@@ -128,7 +84,12 @@ const IncomeManager = () => {
       };
       
       setIncomes([...incomes, income]);
-      setNewIncome({ name: '', amount: '', accountId: '', categoryId: '' });
+      setNewIncome({ 
+        name: '', 
+        amount: '', 
+        accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '', 
+        categoryId: '' 
+      });
       setIsIncomeDialogOpen(false);
     }
   };
@@ -143,7 +104,11 @@ const IncomeManager = () => {
       };
       
       setCategories([...categories, category]);
-      setNewCategory({ name: '', color: 'blue', accountId: '' });
+      setNewCategory({ 
+        name: '', 
+        color: 'blue', 
+        accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '' 
+      });
       setIsCategoryDialogOpen(false);
     }
   };
@@ -209,7 +174,6 @@ const IncomeManager = () => {
         <div className="flex flex-col sm:flex-row gap-3 items-center sm:justify-between mb-4">
           <div>
             <h3 className="font-bold text-gray-800">{income.name}</h3>
-            {/* <p className="text-sm text-gray-500">{income.totalItems} transactions</p> */}
             <p className="text-sm text-gray-500">added by-{income.user || "Josheph"} </p>
             <div className="flex items-center gap-2 mt-1">
               <span className={`inline-block w-2 h-2 rounded-full ${getColorClass(account?.color)}`}></span>
@@ -254,23 +218,39 @@ const IncomeManager = () => {
   );
 
   const filteredIncomes = getFilteredIncomes();
+  
+  // Filter accounts and categories based on accountType if provided
+  const filteredAccounts = accountType 
+    ? accounts.filter(acc => acc.name === accountType)
+    : accounts;
+    
+  const filteredCategories = accountType 
+    ? categories.filter(cat => {
+        const account = accounts.find(acc => acc.id === cat.accountId);
+        return account?.name === accountType;
+      })
+    : categories;
 
   return (
     <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="mb-8">
         <div className="flex flex-col md:flex-row gap-3 justify-between md:items-center mb-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Income Manager</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {accountType ? `${accountType} Income Manager` : 'Income Manager'}
+            </h1>
             <p className="text-gray-600">Manage accounts, categories, and income streams</p>
           </div>
           <div className="flex gap-2 flex-col md:flex-row">
-            <button
-              onClick={() => setIsAccountDialogOpen(true)}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
-            >
-              <CreditCard size={16} />
-              New Account
-            </button>
+            {!accountType && (
+              <button
+                onClick={() => setIsAccountDialogOpen(true)}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+              >
+                <CreditCard size={16} />
+                New Account
+              </button>
+            )}
             <button
               onClick={() => setIsCategoryDialogOpen(true)}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center gap-2"
@@ -310,72 +290,78 @@ const IncomeManager = () => {
               <CreditCard className="text-purple-500" size={24} />
               <div>
                 <p className="text-sm text-gray-500">Accounts</p>
-                <p className="text-2xl font-bold text-gray-900">{accounts.length}</p>
+                <p className="text-2xl font-bold text-gray-900">{filteredAccounts.length}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
-          <div className="flex flex-col md:flex-row md:items-center gap-4">
-            <Filter className="text-gray-500" size={20} />
-            <div className="flex gap-4 flex-1 flex-col md:flex-row">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Account</label>
-                <select
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  value={filters.accountId}
-                  onChange={(e) => setFilters({ accountId: e.target.value })}
-                >
-                  <option value="">All Accounts</option>
-                  {accounts.map(account => (
-                    <option key={account.id} value={account.id}>{account.name}</option>
-                  ))}
-                </select>
-              </div>
-              <button
-                onClick={() => setFilters({ accountId: '' })}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold mt-6"
-              >
-                Clear
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Accounts Management */}
-        <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
-          <h3 className="text-lg font-semibold mb-4">Your Accounts</h3>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {accounts.map(account => {
-              const categoriesCount = categories.filter(cat => cat.accountId === account.id).length;
-              return (
-                <div key={account.id} className="p-4 border rounded-lg flex justify-between items-center sm:flex-row flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className={`inline-block w-3 h-3 rounded-full ${getColorClass(account.color)}`}></span>
-                    <div>
-                      <p className="font-medium text-sm md:text-lg">{account.name}</p>
-                      <p className="text-sm text-gray-500">{categoriesCount} categories</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteAccount(account.id)}
-                    className="text-red-500 hover:text-red-700"
+        {/* Filters - Only show if not filtered by accountType */}
+        {!accountType && (
+          <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
+            <div className="flex flex-col md:flex-row md:items-center gap-4">
+              <Filter className="text-gray-500" size={20} />
+              <div className="flex gap-4 flex-1 flex-col md:flex-row">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Account</label>
+                  <select
+                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={filters.accountId}
+                    onChange={(e) => setFilters({ accountId: e.target.value })}
                   >
-                    <Trash2 size={16} />
-                  </button>
+                    <option value="">All Accounts</option>
+                    {accounts.map(account => (
+                      <option key={account.id} value={account.id}>{account.name}</option>
+                    ))}
+                  </select>
                 </div>
-              );
-            })}
+                <button
+                  onClick={() => setFilters({ accountId: '' })}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold mt-6"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* Accounts Management - Only show if not filtered by accountType */}
+        {!accountType && (
+          <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
+            <h3 className="text-lg font-semibold mb-4">Your Accounts</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              {accounts.map(account => {
+                const categoriesCount = categories.filter(cat => cat.accountId === account.id).length;
+                return (
+                  <div key={account.id} className="p-4 border rounded-lg flex justify-between items-center sm:flex-row flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <span className={`inline-block w-3 h-3 rounded-full ${getColorClass(account.color)}`}></span>
+                      <div>
+                        <p className="font-medium text-sm md:text-lg">{account.name}</p>
+                        <p className="text-sm text-gray-500">{categoriesCount} categories</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteAccount(account.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Categories Management */}
         <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
-          <h3 className="text-lg font-semibold mb-4">Your Categories</h3>
+          <h3 className="text-lg font-semibold mb-4">
+            {accountType ? `${accountType} Categories` : 'Your Categories'}
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {categories.map(category => {
+            {filteredCategories.map(category => {
               const account = getAccountById(category.accountId);
               const incomesCount = incomes.filter(income => income.categoryId === category.id).length;
               return (
@@ -437,19 +423,21 @@ const IncomeManager = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account</label>
-                <select
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  value={newIncome.accountId}
-                  onChange={(e) => setNewIncome({ ...newIncome, accountId: e.target.value })}
-                >
-                  <option value="">Select Account</option>
-                  {accounts.map(account => (
-                    <option key={account.id} value={account.id}>{account.name}</option>
-                  ))}
-                </select>
-              </div>
+              {!accountType && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Account</label>
+                  <select
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={newIncome.accountId}
+                    onChange={(e) => setNewIncome({ ...newIncome, accountId: e.target.value })}
+                  >
+                    <option value="">Select Account</option>
+                    {accounts.map(account => (
+                      <option key={account.id} value={account.id}>{account.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
@@ -473,7 +461,12 @@ const IncomeManager = () => {
                 className="flex-1 px-4 py-2 text-gray-700 border rounded-lg hover:bg-gray-50"
                 onClick={() => {
                   setIsIncomeDialogOpen(false);
-                  setNewIncome({ name: '', amount: '', accountId: '', categoryId: '' });
+                  setNewIncome({ 
+                    name: '', 
+                    amount: '', 
+                    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '', 
+                    categoryId: '' 
+                  });
                 }}
               >
                 Cancel
@@ -490,8 +483,8 @@ const IncomeManager = () => {
         </div>
       )}
 
-      {/* Create Account Dialog */}
-      {isAccountDialogOpen && (
+      {/* Create Account Dialog - Only show if not filtered by accountType */}
+      {isAccountDialogOpen && !accountType && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Create New Account</h2>
@@ -565,19 +558,21 @@ const IncomeManager = () => {
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account</label>
-                <select
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-                  value={newCategory.accountId}
-                  onChange={(e) => setNewCategory({ ...newCategory, accountId: e.target.value })}
-                >
-                  <option value="">Select Account</option>
-                  {accounts.map(account => (
-                    <option key={account.id} value={account.id}>{account.name}</option>
-                  ))}
-                </select>
-              </div>
+              {!accountType && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Account</label>
+                  <select
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={newCategory.accountId}
+                    onChange={(e) => setNewCategory({ ...newCategory, accountId: e.target.value })}
+                  >
+                    <option value="">Select Account</option>
+                    {accounts.map(account => (
+                      <option key={account.id} value={account.id}>{account.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
@@ -601,7 +596,11 @@ const IncomeManager = () => {
                 className="flex-1 px-4 py-2 text-gray-700 border rounded-lg hover:bg-gray-50"
                 onClick={() => {
                   setIsCategoryDialogOpen(false);
-                  setNewCategory({ name: '', color: 'blue', accountId: '' });
+                  setNewCategory({ 
+                    name: '', 
+                    color: 'blue', 
+                    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '' 
+                  });
                 }}
               >
                 Cancel

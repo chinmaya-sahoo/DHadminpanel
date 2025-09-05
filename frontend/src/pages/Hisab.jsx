@@ -8,7 +8,7 @@ import BudgetPersonal from "./BudgetPersonal"; // You'll need to create this
 import BudgetBusiness from "./BudgetBusiness"; // You'll need to create this
 
 export default function Hisab() {
-  const [activeTab, setActiveTab] = useState("Expense");
+  const [activeTab, setActiveTab] = useState("Income");
   const [account, setAccount] = useState("Personal");
 
   const renderContent = () => {
@@ -41,7 +41,7 @@ export default function Hisab() {
       {/* Tab Navigation */}
       <div className="flex justify-center mb-6">
         <div className="bg-blue-300 p-1 rounded-full flex space-x-4">
-          {["Expense", "Income", "Budget"].map((tab) => (
+          {["Income","Expense", "Budget"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
