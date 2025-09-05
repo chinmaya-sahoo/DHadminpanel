@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Plus, DollarSign, TrendingUp, Filter, Trash2, Tag, CreditCard } from 'lucide-react';
 
 const IncomeManager = () => {
-  // Sample accounts data (these are the account types now)
   const [accounts, setAccounts] = useState([
     { id: 1, name: 'Personal', color: 'blue' },
     { id: 2, name: 'Business', color: 'green' },

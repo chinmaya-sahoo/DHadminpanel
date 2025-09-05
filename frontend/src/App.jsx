@@ -7,7 +7,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import Settings from './pages/Settings';
 import apiService from './services/api';
 import Transaction from "./pages/Transaction";
-import Income from "./pages/Income";
+// import IncomePersonal from "./pages/IncomePersonal";
 import Expense from "./pages/Expense";
 import Budget from "./pages/Budget";
 import Udhari from "./pages/Udhari";
@@ -91,7 +91,7 @@ const App = () => {
           <Route path="/admin/transaction" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
           <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
           <Route path="/admin/hisab" element={<ProtectedRoute><Hisab /></ProtectedRoute>} />
-          <Route path="/admin/income" element={<ProtectedRoute><Income /></ProtectedRoute>} />
+          {/* <Route path="/admin/incomepersonal" element={<ProtectedRoute><IncomePersonal /></ProtectedRoute>} /> */}
           <Route path="/admin/expense" element={<ProtectedRoute><Expense /></ProtectedRoute>} />
           <Route path="/admin/udhari" element={<ProtectedRoute><Udhari /></ProtectedRoute>} />
           <Route path="/admin/budget" element={<ProtectedRoute><Budget /></ProtectedRoute>} />

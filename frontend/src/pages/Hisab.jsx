@@ -1,20 +1,38 @@
 // File: src/pages/hisab.jsx
 import React, { useState } from "react";
-import Income from "./Income";
-import Expense from "./Expense";
-import Budget from "./Budget";
+import IncomePersonal from "./IncomePersonal";
+import IncomeBusiness from "./IncomeBusiness"; // You'll need to create this
+import ExpensePersonal from "./ExpensePersonal"; // You'll need to create this
+import ExpenseBusiness from "./ExpenseBusiness"; // You'll need to create this
+import BudgetPersonal from "./BudgetPersonal"; // You'll need to create this
+import BudgetBusiness from "./BudgetBusiness"; // You'll need to create this
 
 export default function Hisab() {
   const [activeTab, setActiveTab] = useState("Expense");
+  const [account, setAccount] = useState("Personal");
 
   const renderContent = () => {
-    switch (activeTab) {
-      case "Income":
-        return <Income />;
-      case "Budget":
-        return <Budget />;
+    switch (account) {
+      case "Personal":
+        switch (activeTab) {
+          case "Income":
+            return <IncomePersonal />;
+          case "Budget":
+            return <BudgetPersonal />;
+          default:
+            return <ExpensePersonal />;
+        }
+      case "Business":
+        switch (activeTab) {
+          case "Income":
+            return <IncomeBusiness />;
+          case "Budget":
+            return <BudgetBusiness />;
+          default:
+            return <ExpenseBusiness />;
+        }
       default:
-        return <Expense />;
+        return <ExpensePersonal />;
     }
   };
 
@@ -38,6 +56,19 @@ export default function Hisab() {
           ))}
         </div>
       </div>
+
+      {/* Account Selection */}
+      <div className="flex justify-center mb-6">
+        <select
+          value={account}
+          onChange={(e) => setAccount(e.target.value)}
+          className="px-3 py-1 rounded-full bg-gray-300 text-gray-700 font-medium text-sm md:text-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+        >
+          <option value="Personal">Personal</option>
+          <option value="Business">Business</option>
+        </select>
+      </div>
+
 
       {/* Content Area */}
       <div className="bg-white rounded-2xl shadow-md p-4">{renderContent()}</div>
