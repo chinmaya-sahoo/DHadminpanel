@@ -1,6 +1,6 @@
 // File: src/components/IncomeManager.jsx
 import React, { useState, useEffect } from 'react';
-import { Plus, DollarSign, TrendingUp, Filter, Trash2, Tag, CreditCard } from 'lucide-react';
+import { Plus, DollarSign, TrendingUp, Filter, Trash2, Tag, CreditCard, X } from 'lucide-react';
 
 const IncomeManager = ({ 
   accountType = null, 
@@ -38,7 +38,8 @@ const IncomeManager = ({
 
   // Filter states - preset with accountType if provided
   const [filters, setFilters] = useState({
-    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : ''
+    accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '',
+    categoryId: ''
   });
 
   // Update states when props change
@@ -60,12 +61,23 @@ const IncomeManager = ({
 
   const getFilteredIncomes = () => {
     return incomes.filter(income => {
+      // Filter by account type if provided
       if (accountType) {
         const account = accounts.find(acc => acc.id === income.accountId);
-        return account?.name === accountType;
+        if (account?.name !== accountType) return false;
       }
-      if (!filters.accountId) return true;
-      return income.accountId === parseInt(filters.accountId);
+      
+      // Filter by account if selected
+      if (filters.accountId && income.accountId !== parseInt(filters.accountId)) {
+        return false;
+      }
+      
+      // Filter by category if selected
+      if (filters.categoryId && income.categoryId !== parseInt(filters.categoryId)) {
+        return false;
+      }
+      
+      return true;
     });
   };
 
@@ -165,6 +177,13 @@ const IncomeManager = ({
     return colorMap[color] || colorMap.blue;
   };
 
+  const clearFilters = () => {
+    setFilters({
+      accountId: accountType ? accounts.find(acc => acc.name === accountType)?.id || '' : '',
+      categoryId: ''
+    });
+  };
+
   const IncomeItem = ({ income }) => {
     const account = getAccountById(income.accountId);
     const category = getCategoryById(income.categoryId);
@@ -231,6 +250,12 @@ const IncomeManager = ({
       })
     : categories;
 
+  // Get categories for the filter dropdown based on selected account
+  const getCategoriesForFilter = () => {
+    if (!filters.accountId) return categories;
+    return categories.filter(cat => cat.accountId === parseInt(filters.accountId));
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
       <div className="mb-8">
@@ -296,18 +321,18 @@ const IncomeManager = ({
           </div>
         </div>
 
-        {/* Filters - Only show if not filtered by accountType */}
-        {!accountType && (
-          <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
-            <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <Filter className="text-gray-500" size={20} />
-              <div className="flex gap-4 flex-1 flex-col md:flex-row">
+        {/* Filters */}
+        <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <Filter className="text-gray-500" size={20} />
+            <div className="flex gap-4 flex-1 flex-col md:flex-row">
+              {!accountType && (
                 <div className="flex-1">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Account</label>
                   <select
                     className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     value={filters.accountId}
-                    onChange={(e) => setFilters({ accountId: e.target.value })}
+                    onChange={(e) => setFilters({ ...filters, accountId: e.target.value, categoryId: '' })}
                   >
                     <option value="">All Accounts</option>
                     {accounts.map(account => (
@@ -315,16 +340,62 @@ const IncomeManager = ({
                     ))}
                   </select>
                 </div>
-                <button
-                  onClick={() => setFilters({ accountId: '' })}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold mt-6"
+              )}
+              
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Category</label>
+                <select
+                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                  value={filters.categoryId}
+                  onChange={(e) => setFilters({ ...filters, categoryId: e.target.value })}
+                  disabled={!filters.accountId && !accountType}
                 >
-                  Clear
-                </button>
+                  <option value="">All Categories</option>
+                  {getCategoriesForFilter().map(category => (
+                    <option key={category.id} value={category.id}>{category.name}</option>
+                  ))}
+                </select>
               </div>
+              
+              <button
+                onClick={clearFilters}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold mt-6 flex items-center gap-2"
+              >
+                <X size={16} />
+                Clear Filters
+              </button>
             </div>
           </div>
-        )}
+          
+          {/* Active filters display */}
+          {(filters.accountId || filters.categoryId) && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {filters.accountId && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Account: {getAccountById(parseInt(filters.accountId))?.name}
+                  <button 
+                    onClick={() => setFilters({ ...filters, accountId: '', categoryId: '' })}
+                    className="ml-1 text-blue-600 hover:text-blue-800"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              )}
+              
+              {filters.categoryId && (
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Category: {getCategoryById(parseInt(filters.categoryId))?.name}
+                  <button 
+                    onClick={() => setFilters({ ...filters, categoryId: '' })}
+                    className="ml-1 text-purple-600 hover:text-purple-800"
+                  >
+                    <X size={14} />
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Accounts Management - Only show if not filtered by accountType */}
         {!accountType && (
@@ -429,7 +500,7 @@ const IncomeManager = ({
                   <select
                     className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     value={newIncome.accountId}
-                    onChange={(e) => setNewIncome({ ...newIncome, accountId: e.target.value })}
+                    onChange={(e) => setNewIncome({ ...newIncome, accountId: e.target.value, categoryId: '' })}
                   >
                     <option value="">Select Account</option>
                     {accounts.map(account => (
@@ -445,6 +516,7 @@ const IncomeManager = ({
                   className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
                   value={newIncome.categoryId}
                   onChange={(e) => setNewIncome({ ...newIncome, categoryId: e.target.value })}
+                  disabled={!newIncome.accountId && !accountType}
                 >
                   <option value="">Select Category</option>
                   {categories

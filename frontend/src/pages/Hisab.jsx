@@ -62,7 +62,7 @@ export default function Hisab() {
         <select
           value={account}
           onChange={(e) => setAccount(e.target.value)}
-          className="px-3 py-1 rounded-full bg-gray-300 text-gray-700 font-medium text-sm md:text-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
+          className="px-3 py-1 rounded-[10px] bg-gray-300 text-gray-700 font-medium text-sm md:text-lg focus:outline-none focus:ring-2 focus:ring-gray-500"
         >
           <option value="Personal">Personal</option>
           <option value="Business">Business</option>
