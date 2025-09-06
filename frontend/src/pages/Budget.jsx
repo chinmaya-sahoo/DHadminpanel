@@ -15,10 +15,17 @@ const BudgetManager = ({
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   
-  // Filter state
+  // Filter state - FIXED: Initialize based on accountType prop
   const [filters, setFilters] = useState({
     accountType: accountType || 'all'
   });
+
+  // FIXED: Update filters when accountType prop changes
+  useEffect(() => {
+    setFilters({
+      accountType: accountType || 'all'
+    });
+  }, [accountType]);
 
   const [newBudget, setNewBudget] = useState({
     name: '',
