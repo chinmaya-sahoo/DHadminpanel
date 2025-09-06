@@ -1,113 +1,30 @@
-import React, { useState } from 'react';
-import { Plus, DollarSign, TrendingUp, ArrowLeft, Pen, Trash, Target, Calendar, PieChart, Filter } from 'lucide-react';
+// File: src/components/BudgetManager.jsx
+import React, { useState, useEffect } from 'react';
+import { Plus, DollarSign, TrendingUp, ArrowLeft, Trash2, Target, Calendar, PieChart, Filter, X } from 'lucide-react';
 
-const BudgetManager = () => {
-  const [budgets, setBudgets] = useState([
-    {
-      id: 1,
-      name: 'Groceries',
-      amount: 500,
-      icon: '🛒',
-      totalSpend: 320.50,
-      totalItems: 8,
-      createdAt: '2025-08-01',
-      accountType: 'checking'
-    },
-    {
-      id: 2,
-      name: 'Transportation',
-      amount: 300,
-      icon: '🚗',
-      totalSpend: 280.75,
-      totalItems: 12,
-      createdAt: '2025-08-01',
-      accountType: 'checking'
-    },
-    {
-      id: 3,
-      name: 'Entertainment',
-      amount: 200,
-      icon: '🎬',
-      totalSpend: 150.25,
-      totalItems: 5,
-      createdAt: '2025-08-01',
-      accountType: 'savings'
-    },
-    {
-      id: 4,
-      name: 'Healthcare',
-      amount: 400,
-      icon: '🏥',
-      totalSpend: 85.00,
-      totalItems: 2,
-      createdAt: '2025-08-01',
-      accountType: 'credit'
-    }
-  ]);
-
-  const [expenses, setExpenses] = useState([
-    {
-      id: 1,
-      name: 'Weekly Groceries',
-      amount: 85.50,
-      budgetId: 1,
-      createdAt: '2025-08-20',
-      description: 'Walmart shopping'
-    },
-    {
-      id: 2,
-      name: 'Gas Fill Up',
-      amount: 45.00,
-      budgetId: 2,
-      createdAt: '2025-08-19',
-      description: 'Shell gas station'
-    },
-    {
-      id: 3,
-      name: 'Movie Tickets',
-      amount: 25.00,
-      budgetId: 3,
-      createdAt: '2025-08-18',
-      description: 'Avatar 3D tickets'
-    },
-    {
-      id: 4,
-      name: 'Coffee Shop',
-      amount: 12.50,
-      budgetId: 1,
-      createdAt: '2025-08-17',
-      description: 'Starbucks latte'
-    },
-    {
-      id: 5,
-      name: 'Uber Ride',
-      amount: 18.75,
-      budgetId: 2,
-      createdAt: '2025-08-16',
-      description: 'Airport pickup'
-    },
-    {
-      id: 6,
-      name: 'Doctor Visit',
-      amount: 85.00,
-      budgetId: 4,
-      createdAt: '2025-08-15',
-      description: 'Annual checkup'
-    }
-  ]);
-
-  const [currentView, setCurrentView] = useState('overview'); // 'overview' or budgetId
+const BudgetManager = ({ 
+  accountType = null, 
+  initialBudgets = [], 
+  initialExpenses = [] 
+}) => {
+  const [budgets, setBudgets] = useState(initialBudgets);
+  const [expenses, setExpenses] = useState(initialExpenses);
+  const [currentView, setCurrentView] = useState('overview');
   const [selectedBudget, setSelectedBudget] = useState(null);
   const [isCreateBudgetOpen, setIsCreateBudgetOpen] = useState(false);
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
-  const [accountFilter, setAccountFilter] = useState('all');
   
+  // Filter state
+  const [filters, setFilters] = useState({
+    accountType: accountType || 'all'
+  });
+
   const [newBudget, setNewBudget] = useState({
     name: '',
     amount: '',
     icon: '💰',
-    accountType: 'checking'
+    accountType: accountType || 'Personal'
   });
 
   const [newExpense, setNewExpense] = useState({
@@ -116,17 +33,44 @@ const BudgetManager = () => {
     description: ''
   });
 
-  const accountTypes = [
-    { value: 'checking', label: 'Checking Account', color: 'text-blue-600' },
-    { value: 'savings', label: 'Savings Account', color: 'text-green-600' },
-    { value: 'credit', label: 'Credit Card', color: 'text-purple-600' },
-    { value: 'cash', label: 'Cash', color: 'text-yellow-600' }
-  ];
+  // Budget categories for each account type
+  const budgetCategories = {
+    Personal: [
+      { name: 'Groceries', icon: '🛒', defaultAmount: 500 },
+      { name: 'Transportation', icon: '🚗', defaultAmount: 300 },
+      { name: 'Entertainment', icon: '🎬', defaultAmount: 200 },
+      { name: 'Healthcare', icon: '🏥', defaultAmount: 400 },
+      { name: 'Utilities', icon: '💡', defaultAmount: 250 },
+      { name: 'Dining', icon: '🍔', defaultAmount: 150 },
+      { name: 'Shopping', icon: '🛍️', defaultAmount: 200 },
+      { name: 'Education', icon: '📚', defaultAmount: 100 }
+    ],
+    Business: [
+      { name: 'Marketing', icon: '📈', defaultAmount: 2000 },
+      { name: 'Office Supplies', icon: '📎', defaultAmount: 500 },
+      { name: 'Travel & Expenses', icon: '✈️', defaultAmount: 1500 },
+      { name: 'Equipment', icon: '💻', defaultAmount: 5000 },
+      { name: 'Software', icon: '🖥️', defaultAmount: 1000 },
+      { name: 'Professional Services', icon: '👔', defaultAmount: 800 },
+      { name: 'Advertising', icon: '📢', defaultAmount: 1200 },
+      { name: 'Training', icon: '🎓', defaultAmount: 600 }
+    ]
+  };
 
   const emojis = [
     '💰', '🛒', '🚗', '🎬', '🏥', '🍔', '✈️', '🏠', '💡', '📱', 
-    '🎯', '📚', '🎨', '🎵', '👕', '⚽', '🎮', '💊', '🔧', '📈'
+    '🎯', '📚', '🎨', '🎵', '👕', '⚽', '🎮', '💊', '🔧', '📈',
+    '📎', '💻', '🖥️', '👔', '📢', '🎓', '🛍️'
   ];
+
+  // Update states when props change
+  useEffect(() => {
+    setBudgets(initialBudgets);
+  }, [initialBudgets]);
+
+  useEffect(() => {
+    setExpenses(initialExpenses);
+  }, [initialExpenses]);
 
   const calculateProgressPerc = (totalSpend, amount) => {
     const perc = (totalSpend / amount) * 100;
@@ -146,18 +90,26 @@ const BudgetManager = () => {
   };
 
   const getAccountTypeLabel = (type) => {
-    const account = accountTypes.find(acc => acc.value === type);
-    return account ? account.label : type;
+    return type === 'Personal' ? 'Personal Account' : 'Business Account';
   };
 
   const getAccountTypeColor = (type) => {
-    const account = accountTypes.find(acc => acc.value === type);
-    return account ? account.color : 'text-gray-600';
+    return type === 'Personal' ? 'text-blue-600' : 'text-green-600';
   };
 
-  const filteredBudgets = accountFilter === 'all' 
+  const getAccountTypeBgColor = (type) => {
+    return type === 'Personal' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
+  };
+
+  const filteredBudgets = filters.accountType === 'all' 
     ? budgets 
-    : budgets.filter(budget => budget.accountType === accountFilter);
+    : budgets.filter(budget => budget.accountType === filters.accountType);
+
+  const clearFilters = () => {
+    setFilters({
+      accountType: accountType || 'all'
+    });
+  };
 
   const handleCreateBudget = () => {
     if (newBudget.name && newBudget.amount) {
@@ -173,8 +125,14 @@ const BudgetManager = () => {
       };
       
       setBudgets([...budgets, budget]);
-      setNewBudget({ name: '', amount: '', icon: '💰', accountType: 'checking' });
+      setNewBudget({ 
+        name: '', 
+        amount: '', 
+        icon: '💰', 
+        accountType: accountType || 'Personal' 
+      });
       setIsCreateBudgetOpen(false);
+      setIsEmojiPickerOpen(false);
     }
   };
 
@@ -259,8 +217,8 @@ const BudgetManager = () => {
     setCurrentView(budget.id.toString());
   };
 
-  const totalBudgeted = budgets.reduce((sum, budget) => sum + budget.amount, 0);
-  const totalSpent = budgets.reduce((sum, budget) => sum + budget.totalSpend, 0);
+  const totalBudgeted = filteredBudgets.reduce((sum, budget) => sum + budget.amount, 0);
+  const totalSpent = filteredBudgets.reduce((sum, budget) => sum + budget.totalSpend, 0);
   const totalRemaining = totalBudgeted - totalSpent;
 
   const CreateBudgetCard = () => (
@@ -302,7 +260,7 @@ const BudgetManager = () => {
             }}
             className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all p-1"
           >
-            <Trash size={16} />
+            <Trash2 size={16} />
           </button>
         </div>
         
@@ -328,7 +286,7 @@ const BudgetManager = () => {
           </div>
           
           <div className="flex justify-between items-center mt-2 sm:flex-row flex-col">
-            <span className={`text-xs text-center font-medium px-2 py-1 rounded-full ${getAccountTypeColor(budget.accountType)} bg-opacity-20`}>
+            <span className={`text-xs text-center font-medium px-2 py-1 rounded-full ${getAccountTypeBgColor(budget.accountType)}`}>
               {getAccountTypeLabel(budget.accountType)}
             </span>
             <p className="text-xs text-gray-500">
@@ -357,7 +315,7 @@ const BudgetManager = () => {
           onClick={() => handleDeleteExpense(expense.id)}
           className="text-red-500 hover:text-red-700 p-1 transition-colors"
         >
-          <Trash size={14} />
+          <Trash2 size={14} />
         </button>
       </div>
     </div>
@@ -369,27 +327,55 @@ const BudgetManager = () => {
         // Budget Overview
         <>
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">My Budgets</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {accountType ? `${accountType} Budget Manager` : 'Budget Manager'}
+            </h1>
             <p className="text-gray-600">Manage your spending categories and track expenses</p>
             
-            {/* Account Filter */}
-            <div className="flex items-start sm:items-center gap-3 mt-4 mb-6 flex-col sm:flex-row">
-              <div className='flex gap-4'>
-              <Filter size={20} className="text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">Filter by account:</span>
+            {/* Filters */}
+            <div className="bg-white p-6 rounded-xl shadow-sm border mt-6">
+              <div className="flex flex-col md:flex-row md:items-center gap-4">
+                <Filter className="text-gray-500" size={20} />
+                <div className="flex gap-4 flex-1 flex-col md:flex-row">
+                  {!accountType && (
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Filter by Account</label>
+                      <select
+                        className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                        value={filters.accountType}
+                        onChange={(e) => setFilters({ ...filters, accountType: e.target.value })}
+                      >
+                        <option value="all">All Accounts</option>
+                        <option value="Personal">Personal Account</option>
+                        <option value="Business">Business Account</option>
+                      </select>
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={clearFilters}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-bold mt-6 flex items-center gap-2"
+                  >
+                    <X size={16} />
+                    Clear Filters
+                  </button>
+                </div>
               </div>
-              <select 
-                value={accountFilter}
-                onChange={(e) => setAccountFilter(e.target.value)}
-                className="px-3 py-1 border rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="all">All Accounts</option>
-                {accountTypes.map(account => (
-                  <option key={account.value} value={account.value}>
-                    {account.label}
-                  </option>
-                ))}
-              </select>
+              
+              {/* Active filters display */}
+              {filters.accountType !== 'all' && (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                    Account: {getAccountTypeLabel(filters.accountType)}
+                    <button 
+                      onClick={() => setFilters({ ...filters, accountType: 'all' })}
+                      className="ml-1 text-blue-600 hover:text-blue-800"
+                    >
+                      <X size={14} />
+                    </button>
+                  </span>
+                </div>
+              )}
             </div>
             
             {/* Summary Cards */}
@@ -433,7 +419,7 @@ const BudgetManager = () => {
                   <PieChart className="text-purple-500" size={24} />
                   <div>
                     <p className="text-sm text-gray-500">Active Budgets</p>
-                    <p className="text-2xl font-bold text-gray-900">{budgets.length}</p>
+                    <p className="text-2xl font-bold text-gray-900">{filteredBudgets.length}</p>
                   </div>
                 </div>
               </div>
@@ -630,20 +616,19 @@ const BudgetManager = () => {
                 />
               </div>
               
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Account Type</label>
-                <select
-                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={newBudget.accountType}
-                  onChange={(e) => setNewBudget({ ...newBudget, accountType: e.target.value })}
-                >
-                  {accountTypes.map(account => (
-                    <option key={account.value} value={account.value}>
-                      {account.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {!accountType && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Account Type</label>
+                  <select
+                    className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={newBudget.accountType}
+                    onChange={(e) => setNewBudget({ ...newBudget, accountType: e.target.value })}
+                  >
+                    <option value="Personal">Personal Account</option>
+                    <option value="Business">Business Account</option>
+                  </select>
+                </div>
+              )}
             </div>
             
             <div className="flex gap-3 mt-6">
@@ -652,7 +637,12 @@ const BudgetManager = () => {
                 onClick={() => {
                   setIsCreateBudgetOpen(false);
                   setIsEmojiPickerOpen(false);
-                  setNewBudget({ name: '', amount: '', icon: '💰', accountType: 'checking' });
+                  setNewBudget({ 
+                    name: '', 
+                    amount: '', 
+                    icon: '💰', 
+                    accountType: accountType || 'Personal' 
+                  });
                 }}
               >
                 Cancel
