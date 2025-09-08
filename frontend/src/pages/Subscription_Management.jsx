@@ -15,10 +15,9 @@ const allFeatures = [
 ];
 
 const initialPlans = [
-  { id: 1, name: "Referral", cost: 0, validity: 0, features: ["Basic Access"] },
-  { id: 2, name: "Freemium", cost: 0, validity: 7, features: ["Basic Access", "Storage Access"] },
-  { id: 3, name: "Starter", cost: 199, validity: 30, features: ["Basic Access", "Storage Access", "Reports Access"] },
-  { id: 4, name: "Premium", cost: 499, validity: 90, features: ["Basic Access", "Storage Access", "Database Access", "Customer Activity Access", "Reports Access"] },
+  { id: 1, name: "Yearly Pro", cost: 999, validity: 365, features: ["Unlimited PDF/Excel export", "Auto backup (Google Drive)", "No ads", "Advanced charts (trendlines, category analytics)", "Multi-device sync", "Invoice generator"], recommended: true, savings: 200, savingsPercentage: 1, billingCycle: "yearly" },
+  { id: 2, name: "Monthly Pro", cost: 100, validity: 30, features: ["Unlimited PDF/Excel export", "Auto backup (Google Drive)", "No ads", "Advanced charts (trendlines, category analytics)", "Multi-device sync", "Invoice generator"], recommended: false, billingCycle: "monthly" },
+  { id: 3, name: "Referral", cost: 0, validity: 10, features: ["Basic Access"] }
 ];
 
 // Mock data for demonstration
@@ -367,7 +366,7 @@ const ManualUpgrade = () => {
       setUpgradeHistory([upgrade, ...upgradeHistory]);
       setEmail('');
       setSelectedPlan('Starter');
-      alert(`Successfully upgraded ${email} to ${selectedPlan} plan!`);
+      // alert(`Successfully upgraded ${email} to ${selectedPlan} plan!`);
     }
   };
 
@@ -574,41 +573,223 @@ const PlanDistribution = () => {
 const PlanManagement = () => {
   const [plans, setPlans] = useState(initialPlans);
   const [editPlan, setEditPlan] = useState(null);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newPlan, setNewPlan] = useState({
+    name: '',
+    cost: 0,
+    validity: 0,
+    features: []
+  });
+  
+  // Add confirmation modal state
+  const [modal, setModal] = useState({ open: false, message: "", onConfirm: null });
 
-  const handleSave = () => {
+  // Confirmation function (same as in User Management)
+  const confirmAction = (msg, action) => {
+    setModal({ open: true, message: msg, onConfirm: action });
+  };
+
+  // Create a new plan
+  const handleCreatePlan = () => {
+    if (newPlan.name && newPlan.cost >= 0 && newPlan.validity >= 0) {
+      const plan = {
+        id: Date.now(),
+        name: newPlan.name,
+        cost: parseFloat(newPlan.cost),
+        validity: parseInt(newPlan.validity),
+        features: [...newPlan.features]
+      };
+      
+      setPlans([...plans, plan]);
+      setNewPlan({
+        name: '',
+        cost: 0,
+        validity: 0,
+        features: []
+      });
+      setIsCreating(false);
+    }
+  };
+
+  // Update an existing plan
+  const handleSave = (planId) => {
     setEditPlan(null);
+    // The state is already updated through the controlled inputs
   };
 
+  // Delete a plan (using confirmation modal)
+  const handleDeletePlan = (planId) => {
+    const planToDelete = plans.find(p => p.id === planId);
+    confirmAction(
+      `Are you sure you want to delete the "${planToDelete.name}" plan? This action cannot be undone.`,
+      () => {
+        setPlans(plans.filter(p => p.id !== planId));
+      }
+    );
+  };
+
+  // Add feature to a plan (for both new and existing plans)
   const handleFeatureAdd = (planId, feature) => {
-    setPlans(plans.map(p =>
-      p.id === planId
-        ? { ...p, features: [...new Set([...p.features, feature])] }
-        : p
-    ));
+    if (planId === 'new') {
+      setNewPlan({
+        ...newPlan,
+        features: [...new Set([...newPlan.features, feature])]
+      });
+    } else {
+      setPlans(plans.map(p =>
+        p.id === planId
+          ? { ...p, features: [...new Set([...p.features, feature])] }
+          : p
+      ));
+    }
   };
 
+  // Remove feature from a plan (for both new and existing plans)
   const handleFeatureRemove = (planId, feature) => {
-    setPlans(plans.map(p =>
-      p.id === planId
-        ? { ...p, features: p.features.filter(f => f !== feature) }
-        : p
-    ));
+    if (planId === 'new') {
+      setNewPlan({
+        ...newPlan,
+        features: newPlan.features.filter(f => f !== feature)
+      });
+    } else {
+      setPlans(plans.map(p =>
+        p.id === planId
+          ? { ...p, features: p.features.filter(f => f !== feature) }
+          : p
+      ));
+    }
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold">💳 Plan Management</h2>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">💳 Plan Management</h2>
+        <button
+          onClick={() => setIsCreating(true)}
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2"
+        >
+          <PlusCircle size={16} />
+          Create New Plan
+        </button>
+      </div>
+
+      {/* Create New Plan Modal */}
+      {isCreating && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Create New Plan</h2>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Plan Name</label>
+                <input
+                  type="text"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="e.g., Enterprise, Professional"
+                  value={newPlan.name}
+                  onChange={(e) => setNewPlan({...newPlan, name: e.target.value})}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cost (₹)</label>
+                <input
+                  type="number"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="499"
+                  value={newPlan.cost}
+                  onChange={(e) => setNewPlan({...newPlan, cost: e.target.value})}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Validity (days)</label>
+                <input
+                  type="number"
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="30"
+                  value={newPlan.validity}
+                  onChange={(e) => setNewPlan({...newPlan, validity: e.target.value})}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Features</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {newPlan.features.map((f, i) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full flex items-center gap-2"
+                    >
+                      {f}
+                      <button
+                        onClick={() => handleFeatureRemove('new', f)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                
+                <select
+                  onChange={e => handleFeatureAdd('new', e.target.value)}
+                  className="p-2 border rounded w-full"
+                  defaultValue=""
+                >
+                  <option value="" disabled>
+                    ➕ Add Feature
+                  </option>
+                  {allFeatures
+                    .filter(f => !newPlan.features.includes(f))
+                    .map((f, idx) => (
+                      <option key={idx} value={f}>
+                        {f}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 mt-6">
+              <button
+                className="flex-1 px-4 py-2 text-gray-700 border rounded-lg hover:bg-gray-50 transition-colors"
+                onClick={() => {
+                  setIsCreating(false);
+                  setNewPlan({
+                    name: '',
+                    cost: 0,
+                    validity: 0,
+                    features: []
+                  });
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                disabled={!newPlan.name || newPlan.cost < 0 || newPlan.validity < 0}
+                onClick={handleCreatePlan}
+              >
+                Create Plan
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {plans.map(plan => (
-          <div key={plan.id} className="border p-4 rounded-lg shadow bg-white">
+          <div key={plan.id} className="border p-4 rounded-lg shadow bg-white relative">
             {editPlan === plan.id ? (
               <>
                 <input
                   type="text"
                   value={plan.name}
-                  disabled
-                  className="w-full p-2 border rounded mb-2 font-bold text-lg bg-gray-100"
+                  onChange={e =>
+                    setPlans(plans.map(p => (p.id === plan.id ? { ...p, name: e.target.value } : p)))
+                  }
+                  className="w-full p-2 border rounded mb-2 font-bold text-lg"
                 />
                 <input
                   type="number"
@@ -666,16 +847,32 @@ const PlanManagement = () => {
                   </select>
                 </div>
 
-                <button
-                  onClick={handleSave}
-                  className="mt-3 flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
-                >
-                  <Save size={16} /> Save
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleSave(plan.id)}
+                    className="flex-1 flex items-center gap-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                  >
+                    <Save size={16} /> Save
+                  </button>
+                  <button
+                    onClick={() => setEditPlan(null)}
+                    className="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </>
             ) : (
               <>
-                <h2 className="text-xl font-bold mb-2">{plan.name}</h2>
+                <button
+                  onClick={() => handleDeletePlan(plan.id)}
+                  className="absolute top-3 right-3 text-red-500 hover:text-red-700 p-1"
+                  title="Delete plan"
+                >
+                  <Trash2 size={16} />
+                </button>
+                
+                <h2 className="text-xl font-bold mb-2 pr-8">{plan.name}</h2>
                 <p className="text-gray-600">💰 Cost: <span className="font-semibold">₹{plan.cost}</span></p>
                 <p className="text-gray-600">📅 Validity: <span className="font-semibold">{plan.validity} days</span></p>
 
@@ -699,10 +896,36 @@ const PlanManagement = () => {
           </div>
         ))}
       </div>
+
+      {/* Confirmation Modal - Same as in User Management */}
+      {modal.open && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[100]">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+            <h2 className="text-lg font-semibold mb-4">Confirm Action</h2>
+            <p className="mb-6 text-gray-700">{modal.message}</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setModal({ ...modal, open: false })}
+                className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  modal.onConfirm();
+                  setModal({ ...modal, open: false });
+                }}
+                className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
-
 // Main Subscription Management Component with Navigation
 export default function SubscriptionManagement() {
   const [activeTab, setActiveTab] = useState(0);
