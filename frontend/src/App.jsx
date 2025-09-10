@@ -21,7 +21,7 @@ import Analytics_Insights from "./pages/Analytics_Insights";
 import Feedback_Support from "./pages/Feedback_Support";
 import Content from "./pages/Content";
 import Tandc from "./pages/Tandc";
-
+import ViewUser from "./pages/ViewUser";
 // Loading component
 const LoadingSpinner = ({ message = "Loading..." }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -102,6 +102,7 @@ const App = () => {
           <Route path="/admin/analytics-insights" element={<ProtectedRoute><Analytics_Insights /></ProtectedRoute>} />
           <Route path="/admin/feedback-support" element={<ProtectedRoute><Feedback_Support /></ProtectedRoute>} />
           <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
+          <Route path="/admin/view-user" element={<ProtectedRoute><ViewUser /></ProtectedRoute>} />
           <Route path="/admin/tnc" element={<ProtectedRoute><Tandc /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Routes>

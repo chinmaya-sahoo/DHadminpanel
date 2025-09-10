@@ -40,6 +40,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/report', icon: <BookMarked size={20} />, label: 'Report' },
     { path: '/admin/hisab', icon: <PiggyBank size={20} />, label: 'Hisab' },
     { path: '/admin/user-management', icon: <Command size={20} />, label: 'User Management' },
+    { path: '/admin/view-user', icon: <Command size={20} />, label: 'Inspect User' },
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
     { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
