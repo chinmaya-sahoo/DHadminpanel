@@ -663,7 +663,7 @@ const PlanManagement = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">💳 Plan Management</h2>
+        <h2 className="text-xl font-semibold">Plan Management</h2>
         <button
           onClick={() => setIsCreating(true)}
           className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 flex items-center gap-2"
@@ -873,8 +873,8 @@ const PlanManagement = () => {
                 </button>
                 
                 <h2 className="text-xl font-bold mb-2 pr-8">{plan.name}</h2>
-                <p className="text-gray-600">💰 Cost: <span className="font-semibold">₹{plan.cost}</span></p>
-                <p className="text-gray-600">📅 Validity: <span className="font-semibold">{plan.validity} days</span></p>
+                <p className="text-gray-700 font-bold">Cost: <span className="font-medium">₹{plan.cost}</span></p>
+                <p className="text-gray-700 font-bold">Validity: <span className="font-medium">{plan.validity} days</span></p>
 
                 <div className="mt-2">
                   <h3 className="font-semibold">Features:</h3>
