@@ -40,7 +40,7 @@ const SidebarLayout = ({ children }) => {
     { path: '/admin/report', icon: <BookMarked size={20} />, label: 'Report' },
     { path: '/admin/hisab', icon: <PiggyBank size={20} />, label: 'Hisab' },
     { path: '/admin/user-management', icon: <Command size={20} />, label: 'User Management' },
-    { path: '/admin/view-user', icon: <Command size={20} />, label: 'Inspect User' },
+    // { path: '/admin/view-user', icon: <Command size={20} />, label: 'Inspect User' },
     { path: '/admin/subscription-management', icon: <CircleDollarSign size={20} />, label: 'Subscription' },
     { path: '/admin/notification', icon: <Bell size={20} />, label: 'Notification' },
     { path: '/admin/analytics-insights', icon: <Component size={20} />, label: 'Analytics Insights' },
@@ -77,7 +77,7 @@ const SidebarLayout = ({ children }) => {
               <Link to="/admin">
               <div className="flex items-center space-x-3">
                 <img src="/logo.png" alt="Daily Hisab Admin Logo" className="w-10 h-10 rounded-full shadow" />
-                <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-2xl font-extrabold  bg-blue-400 bg-clip-text text-transparent">
                   DH Admin
                 </h2>
               </div>
@@ -89,20 +89,19 @@ const SidebarLayout = ({ children }) => {
                 <X size={20} className="text-gray-600" />
               </button>
             </div>
-            <p className="text-sm text-gray-500 mt-1">Manage your store</p>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 px-4 py-6 space-y-2">
+          <nav className="flex-1 px-4 pt-0 pb-6 space-y-2">
             {menuItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`
-                  flex items-center px-4 py-3 rounded-xl text-gray-600 transition-all duration-200 group
+                  flex items-center px-4 py-3 rounded-lg text-gray-600 transition-all duration-200 group
                   ${isActive(item.path) 
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
+                    ? ' bg-blue-400  text-white shadow-lg' 
                     : 'hover:bg-gray-100 hover:text-blue-600 hover:shadow-md'
                   }
                 `}
