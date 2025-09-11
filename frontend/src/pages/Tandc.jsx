@@ -1,60 +1,78 @@
 import React, { useState, useEffect } from 'react';
-import { Save, Edit, FileText, Shield, RefreshCw } from 'lucide-react';
+import { Save, Edit, FileText, Shield, ReceiptText, Plus, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 
 const TandCManager = () => {
   const [policies, setPolicies] = useState({
     terms: {
       title: "Terms and Conditions",
-      content: `Please update your terms and conditions here...`,
+      points: [
+        { id: 1, title: "Introduction", description: "Welcome to our website. These terms govern your use of our site." },
+        { id: 2, title: "User Responsibilities", description: "Users must provide accurate information and keep passwords secure." }
+      ],
       lastUpdated: "2023-01-01"
     },
     privacy: {
       title: "Privacy Policy",
-      content: `Please update your privacy policy here...`,
+      points: [
+        { id: 1, title: "Data Collection", description: "We collect information you provide directly to us." },
+        { id: 2, title: "Data Usage", description: "We use your information to provide and improve our services." }
+      ],
       lastUpdated: "2023-01-01"
     },
-    refund: {
-      title: "Return and Refund Policy",
-      content: `Please update your return and refund policy here...`,
+    about: {
+      title: "About Us",
+      points: [
+        { id: 1, title: "Our Mission", description: "Our mission is to provide excellent services to our customers." },
+        { id: 2, title: "Our Team", description: "We have a dedicated team of professionals." }
+      ],
       lastUpdated: "2023-01-01"
     }
   });
 
   const [activeTab, setActiveTab] = useState('terms');
   const [editMode, setEditMode] = useState(false);
-  const [tempContent, setTempContent] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
+  const [newPoint, setNewPoint] = useState({ title: '', description: '' });
+  const [editingPoint, setEditingPoint] = useState(null);
+  const [originalPolicies, setOriginalPolicies] = useState(null);
 
   // Load policies from localStorage on component mount
   useEffect(() => {
     const savedPolicies = localStorage.getItem('sitePolicies');
     if (savedPolicies) {
-      setPolicies(JSON.parse(savedPolicies));
+      const parsedPolicies = JSON.parse(savedPolicies);
+      setPolicies(parsedPolicies);
+      setOriginalPolicies(parsedPolicies);
+    } else {
+      setOriginalPolicies({...policies});
     }
   }, []);
 
   // Handle tab change
   const handleTabChange = (tab) => {
     if (editMode) {
-      if (window.confirm('You have unsaved changes. Are you sure you want to switch tabs?')) {
-        setEditMode(false);
-        setActiveTab(tab);
-      }
-    } else {
-      setActiveTab(tab);
+      // Revert changes without confirmation
+      setPolicies({...originalPolicies});
+      setEditMode(false);
+      setEditingPoint(null);
+      setNewPoint({ title: '', description: '' });
     }
+    setActiveTab(tab);
   };
 
   // Enable edit mode
   const handleEdit = () => {
-    setTempContent(policies[activeTab].content);
+    setOriginalPolicies({...policies});
     setEditMode(true);
   };
 
   // Cancel editing
   const handleCancel = () => {
+    setPolicies({...originalPolicies});
     setEditMode(false);
+    setEditingPoint(null);
+    setNewPoint({ title: '', description: '' });
     setSaveStatus('');
   };
 
@@ -65,25 +83,104 @@ const TandCManager = () => {
     
     // Simulate API call
     setTimeout(() => {
-      const updatedPolicies = {
-        ...policies,
-        [activeTab]: {
-          ...policies[activeTab],
-          content: tempContent,
-          lastUpdated: new Date().toISOString().split('T')[0]
-        }
-      };
-      
-      setPolicies(updatedPolicies);
-      localStorage.setItem('sitePolicies', JSON.stringify(updatedPolicies));
-      
       setEditMode(false);
+      setEditingPoint(null);
+      setNewPoint({ title: '', description: '' });
+      localStorage.setItem('sitePolicies', JSON.stringify(policies));
+      setOriginalPolicies({...policies});
+      
       setIsSaving(false);
       setSaveStatus('Saved successfully!');
       
       // Clear status message after 3 seconds
       setTimeout(() => setSaveStatus(''), 3000);
     }, 1000);
+  };
+
+  // Add a new point
+  const handleAddPoint = () => {
+    if (!newPoint.title.trim() || !newPoint.description.trim()) return;
+    
+    const nextId = policies[activeTab].points.length > 0 
+      ? Math.max(...policies[activeTab].points.map(p => p.id)) + 1 
+      : 1;
+    
+    const updatedPolicies = {
+      ...policies,
+      [activeTab]: {
+        ...policies[activeTab],
+        points: [...policies[activeTab].points, { id: nextId, ...newPoint }],
+        lastUpdated: new Date().toISOString().split('T')[0]
+      }
+    };
+    
+    setPolicies(updatedPolicies);
+    setNewPoint({ title: '', description: '' });
+  };
+
+  // Start editing a point
+  const handleEditPoint = (point) => {
+    setEditingPoint({...point});
+  };
+
+  // Save edited point
+  const handleSaveEditedPoint = () => {
+    if (!editingPoint.title.trim() || !editingPoint.description.trim()) return;
+    
+    const updatedPolicies = {
+      ...policies,
+      [activeTab]: {
+        ...policies[activeTab],
+        points: policies[activeTab].points.map(p => 
+          p.id === editingPoint.id ? editingPoint : p
+        ),
+        lastUpdated: new Date().toISOString().split('T')[0]
+      }
+    };
+    
+    setPolicies(updatedPolicies);
+    setEditingPoint(null);
+  };
+
+  // Delete a point
+  const handleDeletePoint = (id) => {
+    if (!window.confirm('Are you sure you want to delete this point?')) return;
+    
+    const updatedPolicies = {
+      ...policies,
+      [activeTab]: {
+        ...policies[activeTab],
+        points: policies[activeTab].points.filter(p => p.id !== id),
+        lastUpdated: new Date().toISOString().split('T')[0]
+      }
+    };
+    
+    setPolicies(updatedPolicies);
+  };
+
+  // Move point up or down
+  const handleMovePoint = (id, direction) => {
+    const points = [...policies[activeTab].points];
+    const index = points.findIndex(p => p.id === id);
+    
+    if ((direction === 'up' && index === 0) || 
+        (direction === 'down' && index === points.length - 1)) {
+      return;
+    }
+    
+    const newIndex = direction === 'up' ? index - 1 : index + 1;
+    [points[index], points[newIndex]] = [points[newIndex], points[index]];
+    
+    const updatedPolicies = {
+      ...policies,
+      [activeTab]: {
+        ...policies[activeTab],
+        points,
+        lastUpdated: new Date().toISOString().split('T')[0]
+      }
+    };
+    
+    setPolicies(updatedPolicies);
   };
 
   return (
@@ -119,14 +216,14 @@ const TandCManager = () => {
         </button>
         <button
           className={`flex items-center px-4 py-3 font-medium border-b-2 transition-colors ${
-            activeTab === 'refund'
+            activeTab === 'about'
               ? 'border-blue-500 text-blue-600'
               : 'border-transparent text-gray-500 hover:text-gray-700'
           }`}
-          onClick={() => handleTabChange('refund')}
+          onClick={() => handleTabChange('about')}
         >
-          <RefreshCw size={18} className="mr-2" />
-          Return & Refund
+          <ReceiptText size={18} className="mr-2" />
+          About Us
         </button>
       </div>
 
@@ -163,16 +260,126 @@ const TandCManager = () => {
       {/* Policy Content */}
       {editMode ? (
         <div className="mb-6">
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {policies[activeTab].title} Content
-            </label>
-            <textarea
-              value={tempContent}
-              onChange={(e) => setTempContent(e.target.value)}
-              className="w-full h-96 p-4 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder={`Enter your ${policies[activeTab].title.toLowerCase()} here...`}
-            />
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">Add New Point</h3>
+            <div className="bg-gray-50 p-4 rounded-lg mb-4">
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Point Title</label>
+                <input
+                  type="text"
+                  value={newPoint.title}
+                  onChange={(e) => setNewPoint({...newPoint, title: e.target.value})}
+                  className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter point title"
+                />
+              </div>
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea
+                  value={newPoint.description}
+                  onChange={(e) => setNewPoint({...newPoint, description: e.target.value})}
+                  className="w-full h-24 p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter point description"
+                />
+              </div>
+              <button
+                onClick={handleAddPoint}
+                className="flex items-center px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              >
+                <Plus size={16} className="mr-1" />
+                Add Point
+              </button>
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <h3 className="text-lg font-medium text-gray-800 mb-4">Policy Points</h3>
+            {policies[activeTab].points.length === 0 ? (
+              <p className="text-gray-500 italic">No points added yet.</p>
+            ) : (
+              <div className="space-y-4">
+                {policies[activeTab].points.map((point, index) => (
+                  <div key={point.id} className="border rounded-lg p-4 bg-white">
+                    {editingPoint && editingPoint.id === point.id ? (
+                      <div className="mb-4">
+                        <div className="mb-3">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Point Title</label>
+                          <input
+                            type="text"
+                            value={editingPoint.title}
+                            onChange={(e) => setEditingPoint({...editingPoint, title: e.target.value})}
+                            className="w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                          <textarea
+                            value={editingPoint.description}
+                            onChange={(e) => setEditingPoint({...editingPoint, description: e.target.value})}
+                            className="w-full h-24 p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                          />
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={handleSaveEditedPoint}
+                            className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={() => setEditingPoint(null)}
+                            className="px-3 py-1 text-gray-700 border rounded-md hover:bg-gray-50 transition-colors"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex justify-between items-start mb-2">
+                          <h4 className="text-lg font-medium text-gray-800">
+                            {index + 1}. {point.title}
+                          </h4>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleMovePoint(point.id, 'up')}
+                              disabled={index === 0}
+                              className={`p-1 rounded ${index === 0 ? 'text-gray-400' : 'text-gray-600 hover:bg-gray-100'}`}
+                              title="Move up"
+                            >
+                              <ChevronUp size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleMovePoint(point.id, 'down')}
+                              disabled={index === policies[activeTab].points.length - 1}
+                              className={`p-1 rounded ${index === policies[activeTab].points.length - 1 ? 'text-gray-400' : 'text-gray-600 hover:bg-gray-100'}`}
+                              title="Move down"
+                            >
+                              <ChevronDown size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleEditPoint(point)}
+                              className="p-1 text-blue-600 rounded hover:bg-blue-50"
+                              title="Edit"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeletePoint(point.id)}
+                              className="p-1 text-red-600 rounded hover:bg-red-50"
+                              title="Delete"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-gray-700 whitespace-pre-line">{point.description}</p>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex justify-end gap-3">
@@ -189,17 +396,20 @@ const TandCManager = () => {
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
             >
               <Save size={18} className="mr-2" />
-              {isSaving ? 'Saving...' : 'Save Changes'}
+              {isSaving ? 'Saving...' : 'Save All Changes'}
             </button>
           </div>
         </div>
       ) : (
         <div className="prose max-w-none mb-6">
           <div className="bg-gray-50 p-6 rounded-lg">
-            {policies[activeTab].content.split('\n\n').map((paragraph, index) => (
-              <p key={index} className="mb-4 text-gray-700">
-                {paragraph}
-              </p>
+            {policies[activeTab].points.map((point, index) => (
+              <div key={point.id} className="mb-6 last:mb-0">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {index + 1}. {point.title}
+                </h3>
+                <p className="text-gray-700 whitespace-pre-line">{point.description}</p>
+              </div>
             ))}
           </div>
         </div>
