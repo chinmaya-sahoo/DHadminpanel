@@ -38,9 +38,8 @@ export default function Subscription() {
         {plans.map((plan, index) => (
           <div
             key={index}
-            className={`p-8 rounded-2xl shadow-md border ${
-              plan.name === "Pro" ? "border-indigo-500" : "border-gray-200"
-            } bg-white`}
+            className={`p-8 rounded-2xl shadow-md border ${plan.name === "Pro" ? "border-indigo-500" : "border-gray-200"
+              } bg-white`}
           >
             <h2 className="text-xl font-semibold text-gray-900">{plan.name}</h2>
             <p className="mt-4 text-4xl font-bold text-gray-900">

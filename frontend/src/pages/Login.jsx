@@ -35,10 +35,13 @@ const Login = () => {
     try {
       // Fixed: use email instead of undefined username
       const result = await apiService.login(email, password);
-      
+      console.log("Login result:", result); // Debug log
+
       if (result.success) {
         // Redirect to dashboard on successful login
         navigate("/admin/dashboard", { replace: true });
+      } else {
+        setError("Login failed. Please try again.");
       }
     } catch (err) {
       console.error("Login failed:", err);
@@ -77,7 +80,7 @@ const Login = () => {
                   e.target.nextSibling.style.display = 'block';
                 }}
               />
-              <div 
+              <div
                 className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-600 font-bold text-xl"
                 style={{ display: 'none' }}
               >
@@ -118,9 +121,8 @@ const Login = () => {
                     id="email"
                     type="email"
                     placeholder="Enter your email"
-                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
-                      error ? 'border-red-300' : 'border-gray-200'
-                    }`}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${error ? 'border-red-300' : 'border-gray-200'
+                      }`}
                     value={email}
                     onChange={handleEmailChange}
                     required
@@ -147,9 +149,8 @@ const Login = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${
-                      error ? 'border-red-300' : 'border-gray-200'
-                    }`}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white ${error ? 'border-red-300' : 'border-gray-200'
+                      }`}
                     value={password}
                     onChange={handlePasswordChange}
                     required

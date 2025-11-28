@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component {
     // Log error details
     console.error('Error Boundary caught an error:', error);
     console.error('Error Info:', errorInfo);
-    
+
     this.setState({
       error,
       errorInfo,
@@ -51,7 +51,7 @@ class ErrorBoundary extends React.Component {
       error: null,
       errorInfo: null,
     });
-    
+
     // Navigate to home page
     window.location.href = '/admin/dashboard';
   };
@@ -108,7 +108,7 @@ class ErrorBoundary extends React.Component {
                   <RefreshCw className="w-4 h-4" />
                   Try Again
                 </button>
-                
+
                 <button
                   onClick={this.handleGoHome}
                   className="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-medium transition-colors duration-200 flex items-center justify-center gap-2"
@@ -157,7 +157,7 @@ export const withErrorBoundary = (Component) => {
 export const useErrorHandler = () => {
   const handleError = (error, errorInfo = {}) => {
     console.error('Error caught by error handler:', error);
-    
+
     // You can throw the error to trigger error boundary
     throw error;
   };

@@ -1,7 +1,6 @@
 // components/Header.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Bell, 
   Settings, 
   User, 
   LogOut, 
@@ -14,7 +13,6 @@ import { useAuth } from '../hooks/useAuth';
 
 const Header = ({ onMenuToggle, isSidebarOpen }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef(null);
   
   const { logout, isLoggingOut } = useLogout();
@@ -86,17 +84,8 @@ const Header = ({ onMenuToggle, isSidebarOpen }) => {
         </div>
       </div>
 
-      {/* Right side - Notifications and user menu */}
+      {/* Right side - User menu */}
       <div className="flex items-center space-x-4">
-        {/* Notifications */}
-        <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
-          <Bell className="h-5 w-5 text-gray-600" />
-          {notifications.length > 0 && (
-            <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-              {notifications.length}
-            </span>
-          )}
-        </button>
 
         {/* Settings */}
         <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
