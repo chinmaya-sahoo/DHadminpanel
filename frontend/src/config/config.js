@@ -121,6 +121,7 @@ const config = {
     // Manual Upgrade System
     GET_AVAILABLE_PLANS: '/admin/get_available_plans',
     SEARCH_USER_BY_MOBILE: '/admin/search_user_by_mobile',
+    SEARCH_USERS_AUTOCOMPLETE: '/admin/search_users_autocomplete',
     MANUAL_UPGRADE_USER: '/admin/manual_upgrade_user',
     GET_MANUAL_UPGRADE_HISTORY: '/admin/get_manual_upgrade_history',
     GET_MANUAL_UPGRADE_STATS: '/admin/get_manual_upgrade_stats',
@@ -277,6 +278,7 @@ const config = {
       // Manual Upgrade System URLs
       GET_AVAILABLE_PLANS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_AVAILABLE_PLANS}`,
       SEARCH_USER_BY_MOBILE: `${this.API_BASE_URL}${this.API_ENDPOINTS.SEARCH_USER_BY_MOBILE}`,
+      SEARCH_USERS_AUTOCOMPLETE: `${this.API_BASE_URL}${this.API_ENDPOINTS.SEARCH_USERS_AUTOCOMPLETE}`,
       MANUAL_UPGRADE_USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.MANUAL_UPGRADE_USER}`,
       GET_MANUAL_UPGRADE_HISTORY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_MANUAL_UPGRADE_HISTORY}`,
       GET_MANUAL_UPGRADE_STATS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_MANUAL_UPGRADE_STATS}`,

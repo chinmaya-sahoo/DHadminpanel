@@ -14,6 +14,11 @@ const ManualUpgrade = () => {
   const [searching, setSearching] = useState(false);
   const [searchError, setSearchError] = useState(null);
 
+  // Autocomplete state
+  const [autocompleteUsers, setAutocompleteUsers] = useState([]);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [autocompleteLoading, setAutocompleteLoading] = useState(false);
+
   // Data state
   const [availablePlans, setAvailablePlans] = useState([]);
   const [upgradeHistory, setUpgradeHistory] = useState([]);
@@ -101,6 +106,55 @@ const ManualUpgrade = () => {
     }
   };
 
+  // Autocomplete search with debounce
+  useEffect(() => {
+    const searchTimeout = setTimeout(async () => {
+      if (userMobile && userMobile.length >= 3) {
+        try {
+          setAutocompleteLoading(true);
+          const response = await apiService.searchUsersAutocomplete(userMobile, 5);
+          if (response.success) {
+            setAutocompleteUsers(response.data.users || []);
+            setShowAutocomplete(true);
+          }
+        } catch (error) {
+          console.error('Error in autocomplete:', error);
+          setAutocompleteUsers([]);
+        } finally {
+          setAutocompleteLoading(false);
+        }
+      } else {
+        setAutocompleteUsers([]);
+        setShowAutocomplete(false);
+      }
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(searchTimeout);
+  }, [userMobile]);
+
+  // Handle user selection from autocomplete
+  const handleSelectUser = async (selectedMobile) => {
+    setUserMobile(selectedMobile);
+    setShowAutocomplete(false);
+    setAutocompleteUsers([]);
+
+    // Fetch full user details
+    try {
+      setSearching(true);
+      setSearchError(null);
+      const response = await apiService.searchUserByMobile(selectedMobile);
+      if (response.success) {
+        setSearchedUser(response.data);
+        setSearchError(null);
+      }
+    } catch (error) {
+      setSearchError(error.response?.data?.msg?.[0] || 'Failed to load user details');
+      console.error('Error loading user details:', error);
+    } finally {
+      setSearching(false);
+    }
+  };
+
   // Handle user search by mobile
   const handleSearchUser = async () => {
     if (!searchMobile || searchMobile.trim() === '') {
@@ -158,6 +212,8 @@ const ManualUpgrade = () => {
         setUserMobile('');
         setSearchMobile('');
         setSearchedUser(null);
+        setAutocompleteUsers([]);
+        setShowAutocomplete(false);
         setSelectedPlanId(availablePlans[0]?.subscription_id || '');
         setUpgradeReason('');
         // Refresh data
@@ -394,21 +450,95 @@ const ManualUpgrade = () => {
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <h3 className="text-lg font-semibold mb-4">Upgrade User Subscription</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               User Mobile Number <span className="text-red-500">*</span>
             </label>
-            <input
-              type="tel"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="9786784534"
-              value={userMobile}
-              onChange={(e) => setUserMobile(e.target.value.replace(/[^0-9]/g, ''))}
-              required
-              disabled={!!searchedUser}
-            />
+            <div className="relative">
+              <input
+                type="tel"
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Type mobile number (e.g., 9786784534)"
+                value={userMobile}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/[^0-9]/g, '');
+                  setUserMobile(value);
+                  if (value.length === 0) {
+                    setSearchedUser(null);
+                    setShowAutocomplete(false);
+                  } else {
+                    setSearchedUser(null);
+                    setShowAutocomplete(value.length >= 3);
+                  }
+                }}
+                onFocus={() => {
+                  if (userMobile.length >= 3 && autocompleteUsers.length > 0) {
+                    setShowAutocomplete(true);
+                  }
+                }}
+                onBlur={() => {
+                  // Delay to allow click on dropdown items
+                  setTimeout(() => setShowAutocomplete(false), 200);
+                }}
+                required
+                disabled={!!searchedUser}
+              />
+              {autocompleteLoading && (
+                <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
+              )}
+              
+              {/* Autocomplete Dropdown */}
+              {showAutocomplete && autocompleteUsers.length > 0 && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-auto">
+                  {autocompleteUsers.map((user) => (
+                    <div
+                      key={user.user_id}
+                      onClick={() => handleSelectUser(user.mobile)}
+                      className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <Phone className="w-4 h-4 text-gray-400" />
+                            <span className="font-medium text-gray-900">
+                              {user.phone_code} {user.mobile}
+                            </span>
+                            {user.active_flag === 0 && (
+                              <span className="px-2 py-0.5 text-xs bg-red-100 text-red-800 rounded">
+                                Inactive
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-1 flex items-center gap-4 text-xs text-gray-500">
+                            {user.name && user.name !== 'N/A' && (
+                              <span className="flex items-center gap-1">
+                                <User className="w-3 h-3" />
+                                {user.name}
+                              </span>
+                            )}
+                            {user.email && user.email !== 'N/A' && (
+                              <span className="flex items-center gap-1">
+                                <Mail className="w-3 h-3" />
+                                {user.email}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <CheckCircle className="w-4 h-4 text-blue-500" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {showAutocomplete && autocompleteUsers.length === 0 && userMobile.length >= 3 && !autocompleteLoading && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg p-4 text-center text-sm text-gray-500">
+                  No users found
+                </div>
+              )}
+            </div>
             {searchedUser && (
-              <p className="mt-1 text-xs text-gray-500">Auto-filled from search</p>
+              <p className="mt-1 text-xs text-gray-500">User selected: {searchedUser.user.name}</p>
             )}
           </div>
           <div>

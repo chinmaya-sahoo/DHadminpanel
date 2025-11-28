@@ -585,6 +585,13 @@ const apiService = {
     return response.data;
   },
 
+  searchUsersAutocomplete: async (mobile, limit = 10) => {
+    const response = await api.get(config.API_ENDPOINTS.SEARCH_USERS_AUTOCOMPLETE, {
+      params: { mobile, limit }
+    });
+    return response.data;
+  },
+
   manualUpgradeUser: async (upgradeData) => {
     const response = await api.post(config.API_ENDPOINTS.MANUAL_UPGRADE_USER, upgradeData);
     return response.data;
