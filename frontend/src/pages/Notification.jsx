@@ -103,9 +103,8 @@ export default function Notification() {
   // Target audience configuration
   const targetAudiences = {
     all_users: { label: "All Users", icon: Users, color: "text-blue-600" },
-    monthly_subscribers: { label: "Monthly Subscribers", icon: Calendar, color: "text-green-600" },
-    yearly_subscribers: { label: "Yearly Subscribers", icon: Star, color: "text-yellow-600" },
     free_users: { label: "Free Users", icon: Users, color: "text-gray-600" },
+    paid_users: { label: "Paid Users", icon: Users, color: "text-purple-600" },
   };
 
   // Status configuration
@@ -532,9 +531,8 @@ export default function Notification() {
             >
               <option value="all">All Audiences</option>
               <option value="all_users">All Users</option>
-              <option value="monthly_subscribers">Monthly Subscribers</option>
-              <option value="yearly_subscribers">Yearly Subscribers</option>
               <option value="free_users">Free Users</option>
+              <option value="paid_users">Paid Users</option>
             </select>
           </div>
         </div>
@@ -793,9 +791,8 @@ export default function Notification() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm sm:text-base focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all_users">All Users</option>
-                  <option value="monthly_subscribers">Monthly Subscribers</option>
-                  <option value="yearly_subscribers">Yearly Subscribers</option>
                   <option value="free_users">Free Users</option>
+                  <option value="paid_users">Paid Users</option>
                 </select>
               </div>
               <div className="flex flex-col sm:flex-row gap-2 pt-4">
