@@ -8,7 +8,8 @@ const ManualUpgrade = () => {
   const [selectedPlanId, setSelectedPlanId] = useState('');
   const [upgradeReason, setUpgradeReason] = useState('');
 
-  // Search state
+
+  // Search state (for functionality, card removed from UI)
   const [searchMobile, setSearchMobile] = useState('');
   const [searchedUser, setSearchedUser] = useState(null);
   const [searching, setSearching] = useState(false);
@@ -155,7 +156,7 @@ const ManualUpgrade = () => {
     }
   };
 
-  // Handle user search by mobile
+  // Handle user search by mobile (functionality kept, UI card removed)
   const handleSearchUser = async () => {
     if (!searchMobile || searchMobile.trim() === '') {
       setSearchError('Please enter a mobile number');
@@ -327,125 +328,6 @@ const ManualUpgrade = () => {
         </div>
       )}
 
-      {/* User Search Section */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border">
-        <h3 className="text-lg font-semibold mb-4">Search User by Mobile Number</h3>
-        <div className="flex gap-4">
-          <div className="flex-1">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mobile Number <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="tel"
-                className="w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter mobile number (e.g., 9786784534)"
-                value={searchMobile}
-                onChange={(e) => setSearchMobile(e.target.value.replace(/[^0-9]/g, ''))}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearchUser();
-                  }
-                }}
-              />
-            </div>
-            {searchError && (
-              <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {searchError}
-              </p>
-            )}
-          </div>
-          <div className="flex items-end">
-            <button
-              onClick={handleSearchUser}
-              disabled={searching || !searchMobile}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {searching ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Search className="w-4 h-4" />
-              )}
-              {searching ? 'Searching...' : 'Search User'}
-            </button>
-          </div>
-        </div>
-
-        {/* Searched User Details */}
-        {searchedUser && (
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="text-md font-semibold text-gray-900 mb-3 flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-600" />
-              User Details
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="flex items-start gap-2">
-                <User className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-xs text-gray-500">Name</p>
-                  <p className="text-sm font-medium text-gray-900">{searchedUser.user.name}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-xs text-gray-500">Email</p>
-                  <p className="text-sm font-medium text-gray-900">{searchedUser.user.email}</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-xs text-gray-500">Mobile</p>
-                  <p className="text-sm font-medium text-gray-900">
-                    {searchedUser.user.phone_code} {searchedUser.user.mobile}
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2">
-                <Clock className="w-5 h-5 text-gray-400 mt-0.5" />
-                <div>
-                  <p className="text-xs text-gray-500">Member Since</p>
-                  <p className="text-sm font-medium text-gray-900">{searchedUser.user.created_at}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Current Subscription Details */}
-            <div className="mt-4 pt-4 border-t border-blue-200">
-              <h5 className="text-sm font-semibold text-gray-900 mb-2">Current Subscription</h5>
-              {searchedUser.current_subscription.has_subscription ? (
-                <div className="flex items-center gap-4">
-                  <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    searchedUser.current_subscription.is_active
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  }`}>
-                    {searchedUser.current_subscription.is_active ? 'Active' : 'Expired'}
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">
-                      {searchedUser.current_subscription.plan_name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {searchedUser.current_subscription.subscription_type_label} • 
-                      {searchedUser.current_subscription.is_active
-                        ? ` ${searchedUser.current_subscription.remaining_days} days remaining`
-                        : ` Expired on ${searchedUser.current_subscription.end_date}`
-                      }
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-600">No active subscription</p>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
       {/* Manual Upgrade Form */}
       <div className="bg-white p-6 rounded-lg shadow-sm border">
         <h3 className="text-lg font-semibold mb-4">Upgrade User Subscription</h3>
@@ -481,7 +363,6 @@ const ManualUpgrade = () => {
                   setTimeout(() => setShowAutocomplete(false), 200);
                 }}
               required
-                disabled={!!searchedUser}
             />
               {autocompleteLoading && (
                 <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
@@ -537,9 +418,6 @@ const ManualUpgrade = () => {
                 </div>
               )}
             </div>
-            {searchedUser && (
-              <p className="mt-1 text-xs text-gray-500">User selected: {searchedUser.user.name}</p>
-            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
