@@ -263,16 +263,29 @@ export default function Notification() {
     }
   };
 
+  // Map old target audience values to new ones for backward compatibility
+  const mapTargetAudience = (audience) => {
+    if (!audience) return "all_users";
+    const mapping = {
+      'monthly_subscribers': 'paid_users',
+      'yearly_subscribers': 'paid_users',
+      'inactive_users': 'all_users'
+    };
+    return mapping[audience] || audience;
+  };
+
   // Handle edit campaign
   const handleEditCampaign = (campaign) => {
     setSelectedCampaign(campaign);
     setIsEditMode(true);
+    // Map old target_audience values to new ones
+    const mappedTargetAudience = mapTargetAudience(campaign.target_audience) || "all_users";
     setCampaignData({
       campaign_id: campaign.campaign_id,
       title: campaign.title || "",
       message: campaign.message || "",
       notification_type: campaign.notification_type || "message",
-      target_audience: campaign.target_audience || "all_users",
+      target_audience: mappedTargetAudience,
     });
     setShowCreateModal(true);
   };
@@ -361,8 +374,18 @@ export default function Notification() {
 
   // Render target audience badge
   const renderTargetAudienceBadge = (audience) => {
-    const config = targetAudiences[audience];
-    if (!config) return null;
+    // Map old values to new ones
+    const mappedAudience = mapTargetAudience(audience);
+    const config = targetAudiences[mappedAudience];
+    if (!config) {
+      // Fallback for unknown values
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-gray-600">
+          <Users size={12} />
+          {audience || 'Unknown'}
+        </span>
+      );
+    }
     const IconComponent = config.icon;
     return (
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${config.color}`}>
