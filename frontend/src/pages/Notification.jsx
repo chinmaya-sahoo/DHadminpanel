@@ -56,7 +56,6 @@ const COLORS = ["#4ade80", "#60a5fa", "#f87171", "#fbbf24", "#a78bfa"];
 export default function Notification() {
   // State management
   const [campaigns, setCampaigns] = useState([]);
-  const [performanceStats, setPerformanceStats] = useState({});
   const [systemStats, setSystemStats] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
