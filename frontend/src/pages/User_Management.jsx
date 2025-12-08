@@ -796,10 +796,6 @@ const UserManagement = () => {
                         <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Username</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.username || 'Not provided'}</p>
-                      </div>
-                      <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Date of Birth</label>
                         <p className="text-xs sm:text-sm text-gray-900">
                           {userDetails?.personal_info?.dob
@@ -814,7 +810,22 @@ const UserManagement = () => {
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Age</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.age || 'N/A'}</p>
+                        <p className="text-xs sm:text-sm text-gray-900">
+                          {userDetails?.personal_info?.age !== null && userDetails?.personal_info?.age !== undefined
+                            ? `${userDetails.personal_info.age} years`
+                            : userDetails?.personal_info?.dob
+                            ? (() => {
+                                const dobDate = new Date(userDetails.personal_info.dob);
+                                const today = new Date();
+                                let age = today.getFullYear() - dobDate.getFullYear();
+                                const monthDiff = today.getMonth() - dobDate.getMonth();
+                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
+                                  age--;
+                                }
+                                return `${age} years`;
+                              })()
+                            : 'N/A'}
+                        </p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Gender</label>
@@ -823,22 +834,6 @@ const UserManagement = () => {
                             userDetails?.personal_info?.gender === 2 ? 'Female' :
                               userDetails?.personal_info?.gender === 3 ? 'Other' : 'Not specified'}
                         </p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Zipcode</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.zipcode || 'Not provided'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">City ID</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.city_id || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Country ID</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.country_id || 'N/A'}</p>
-                      </div>
-                      <div className="sm:col-span-2">
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Address</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.address || 'Not provided'}</p>
                       </div>
                     </div>
                   </div>
@@ -854,23 +849,6 @@ const UserManagement = () => {
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Login Type</label>
                         <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.login_type_label || 'App'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Profile Complete</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.account_info?.profile_complete === 1
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                          {userDetails?.account_info?.profile_complete_label || (userDetails?.account_info?.profile_complete === 1 ? 'Complete' : 'Incomplete')}
-                        </span>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Apple ID</label>
-                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.account_info?.apple_id || 'Not linked'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Google ID</label>
-                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.account_info?.google_id || 'Not linked'}</p>
                       </div>
                     </div>
                   </div>
