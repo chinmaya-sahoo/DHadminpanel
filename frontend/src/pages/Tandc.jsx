@@ -184,17 +184,25 @@ const TandCManager = () => {
 
   // Save edited point
   const handleSaveEditedPoint = async () => {
-    if (!editingPoint.title.trim() || !editingPoint.description.trim()) return;
+    // Check for both field name formats (point_title/point_description or title/description)
+    const title = editingPoint.point_title || editingPoint.title || '';
+    const description = editingPoint.point_description || editingPoint.description || '';
+    
+    if (!title.trim() || !description.trim()) {
+      setSaveStatus('Please fill in both title and description.');
+      setTimeout(() => setSaveStatus(''), 3000);
+      return;
+    }
 
     try {
       setIsSaving(true);
       setSaveStatus('Updating point...');
 
       const response = await apiService.updatePolicyPoint(editingPoint.point_id, {
-        point_title: editingPoint.title,
-        point_description: editingPoint.description,
+        point_title: title,
+        point_description: description,
         point_order: editingPoint.point_order,
-        is_active: editingPoint.is_active
+        is_active: editingPoint.is_active !== undefined ? editingPoint.is_active : 1
       });
 
       if (response.success) {

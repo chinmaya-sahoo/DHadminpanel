@@ -4,8 +4,8 @@
 const config = {
   // API Configuration
   // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
-  API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
+  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  // API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
