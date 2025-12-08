@@ -4,8 +4,8 @@
 const config = {
   // API Configuration
   // API_BASE_URL: 'http://127.0.0.1:3000/daliyhisab/server',
-  API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
-  // API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
+  // API_BASE_URL: 'https://appzetoapp.com/daliyhisab/server',
+  API_BASE_URL: 'http://localhost:3000/daliyhisab/server',
 
   // Special Subscription Plan Constants (these are fixed and cannot change)
   SPECIAL_PLANS: {
@@ -40,6 +40,7 @@ const config = {
     LOGOUT: '/api/auth/logout',        // Added
     USER: '/api/user',
     GET_ALL_USERS_WITH_ACCOUNTS: '/admin/get_all_users_with_accounts',
+    PERMANENTLY_DELETE_USER: '/admin/permanently_delete_user',
     BUSINESS: '/api/business',
     REPORT: '/api/report',
     INCOME: '/api/income',
@@ -130,6 +131,7 @@ const config = {
     GET_USER_GROWTH_REPORT: '/admin/get_user_growth_report',
     GET_USER_ACTIVITY_REPORT: '/admin/get_user_activity_report',
     GET_SUBSCRIPTION_REVENUE_REPORT: '/admin/get_subscription_revenue_report',
+    GET_REVENUE_CHART_DATA: '/admin/get_revenue_chart_data',
     GET_BUSINESS_HEALTH_REPORT: '/admin/get_business_health_report',
     GET_INCOME_EXPENSE_SUMMARY: '/admin/get_income_expense_summary',
     GET_EXPENSE_BREAKDOWN: '/admin/get_expense_breakdown',
@@ -200,6 +202,7 @@ const config = {
       LOGOUT: `${this.API_BASE_URL}${this.API_ENDPOINTS.LOGOUT}`,
       USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.USER}`,
       GET_ALL_USERS_WITH_ACCOUNTS: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_ALL_USERS_WITH_ACCOUNTS}`,
+      PERMANENTLY_DELETE_USER: `${this.API_BASE_URL}${this.API_ENDPOINTS.PERMANENTLY_DELETE_USER}`,
       BUSINESS: `${this.API_BASE_URL}${this.API_ENDPOINTS.BUSINESS}`,
       REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.REPORT}`,
       INCOME: `${this.API_BASE_URL}${this.API_ENDPOINTS.INCOME}`,
@@ -287,6 +290,7 @@ const config = {
       GET_USER_GROWTH_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_GROWTH_REPORT}`,
       GET_USER_ACTIVITY_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_USER_ACTIVITY_REPORT}`,
       GET_SUBSCRIPTION_REVENUE_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_SUBSCRIPTION_REVENUE_REPORT}`,
+      GET_REVENUE_CHART_DATA: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_REVENUE_CHART_DATA}`,
       GET_BUSINESS_HEALTH_REPORT: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_BUSINESS_HEALTH_REPORT}`,
       GET_INCOME_EXPENSE_SUMMARY: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_INCOME_EXPENSE_SUMMARY}`,
       GET_EXPENSE_BREAKDOWN: `${this.API_BASE_URL}${this.API_ENDPOINTS.GET_EXPENSE_BREAKDOWN}`,

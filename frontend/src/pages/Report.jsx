@@ -66,6 +66,15 @@ export default function Report() {
     endDate: ""
   });
 
+  // State for revenue chart
+  const [revenueChartData, setRevenueChartData] = useState([]);
+  const [revenueChartSummary, setRevenueChartSummary] = useState({});
+  const [revenueChartPeriod, setRevenueChartPeriod] = useState("monthly");
+  const [revenueChartCustomRange, setRevenueChartCustomRange] = useState({
+    startDate: "",
+    endDate: ""
+  });
+
   // State for credit score (simulated)
   const [creditScore, setCreditScore] = useState(0);
 
@@ -286,11 +295,46 @@ export default function Report() {
     }));
   };
 
+  // Fetch revenue chart data
+  const fetchRevenueChartData = async () => {
+    try {
+      const params = revenueChartPeriod === 'custom'
+        ? {
+          period: 'custom',
+          start_date: revenueChartCustomRange.startDate,
+          end_date: revenueChartCustomRange.endDate
+        }
+        : { period: revenueChartPeriod };
+
+      const response = await apiService.getRevenueChartData(params);
+      if (response && response.success) {
+        setRevenueChartData(response.data.chartData || []);
+        setRevenueChartSummary(response.data.summary || {});
+      }
+    } catch (err) {
+      console.error('Error fetching revenue chart data:', err);
+    }
+  };
+
+  // Handle revenue chart period change
+  const handleRevenueChartPeriodChange = (period) => {
+    setRevenueChartPeriod(period);
+  };
+
+  // Handle revenue chart custom date range
+  const handleRevenueChartCustomDateChange = (field, value) => {
+    setRevenueChartCustomRange(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
   // Load data on component mount and when filters change
   useEffect(() => {
     fetchAllReports();
     fetchPerformanceStats();
-  }, [selectedPeriod, customDateRange]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchRevenueChartData();
+  }, [selectedPeriod, customDateRange, revenueChartPeriod, revenueChartCustomRange]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Calculate credit score from business health summary
   useEffect(() => {
@@ -596,6 +640,158 @@ export default function Report() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Revenue Chart Card */}
+      <div className="bg-white rounded-2xl shadow-md p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4">
+          <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
+            <span className="truncate">Revenue Trend Chart</span>
+          </h3>
+          
+          {/* Period Filter for Revenue Chart */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-gray-500 flex-shrink-0" />
+              <select
+                value={revenueChartPeriod}
+                onChange={(e) => handleRevenueChartPeriodChange(e.target.value)}
+                className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+                <option value="custom">Custom Time Period</option>
+              </select>
+            </div>
+            
+            {revenueChartPeriod === 'custom' && (
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                <input
+                  type="date"
+                  value={revenueChartCustomRange.startDate}
+                  onChange={(e) => handleRevenueChartCustomDateChange('startDate', e.target.value)}
+                  className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  placeholder="Start Date"
+                />
+                <span className="text-gray-500 text-sm text-center sm:hidden">to</span>
+                <span className="hidden sm:inline text-gray-500">to</span>
+                <input
+                  type="date"
+                  value={revenueChartCustomRange.endDate}
+                  onChange={(e) => handleRevenueChartCustomDateChange('endDate', e.target.value)}
+                  className="px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  placeholder="End Date"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Revenue Chart Summary */}
+        {revenueChartSummary && Object.keys(revenueChartSummary).length > 0 && (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="bg-blue-50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600">Total Revenue</p>
+              <p className="text-lg sm:text-xl font-bold text-blue-600">
+                ₹{revenueChartSummary.totalRevenue?.toLocaleString() || '0'}
+              </p>
+            </div>
+            <div className="bg-green-50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600">Total Users</p>
+              <p className="text-lg sm:text-xl font-bold text-green-600">
+                {revenueChartSummary.totalUsers || '0'}
+              </p>
+            </div>
+            <div className="bg-purple-50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600">Avg Revenue</p>
+              <p className="text-lg sm:text-xl font-bold text-purple-600">
+                ₹{Math.round(revenueChartSummary.avgRevenue || 0).toLocaleString()}
+              </p>
+            </div>
+            <div className="bg-orange-50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-600">Data Points</p>
+              <p className="text-lg sm:text-xl font-bold text-orange-600">
+                {revenueChartSummary.dataPoints || '0'}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Revenue Trend Chart */}
+        <div className="h-64 sm:h-80 lg:h-96">
+          {revenueChartData.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={revenueChartData}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="label"
+                  fontSize={10}
+                  tick={{ fontSize: 9 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={80}
+                  interval={0}
+                />
+                <YAxis
+                  fontSize={10}
+                  tick={{ fontSize: 9 }}
+                  tickFormatter={(value) => `₹${value.toLocaleString()}`}
+                />
+                <Tooltip
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      return (
+                        <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                          <p className="font-medium text-sm text-gray-900 mb-2">{data.label}</p>
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-xs text-gray-600">Revenue:</span>
+                              <span className="text-xs font-medium">₹{data.revenue?.toLocaleString() || '0'}</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-xs text-gray-600">Users:</span>
+                              <span className="text-xs font-medium">{data.users || 0}</span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                              <span className="text-xs text-gray-600">Subscriptions:</span>
+                              <span className="text-xs font-medium">{data.subscriptions || 0}</span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#3b82f6"
+                  fillOpacity={1}
+                  fill="url(#colorRevenue)"
+                  name="Revenue (₹)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-500">
+              <div className="text-center">
+                <TrendingUp className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-sm">No revenue data available for the selected period</p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

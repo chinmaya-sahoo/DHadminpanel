@@ -158,10 +158,18 @@ const SubscriptionHistory = () => {
   };
 
   // Get subscription type label
-  const getSubscriptionTypeLabel = (type) => {
+  const getSubscriptionTypeLabel = (type, subscription) => {
+    // Use subscription_type_label from API if available
+    if (subscription && subscription.subscription_type_label) {
+      return subscription.subscription_type_label;
+    }
+    // Fallback to type mapping
     switch (type) {
+      case 0: return 'Free Trial';
       case 1: return 'Yearly';
       case 2: return 'Monthly';
+      case 3: return 'Lifetime';
+      case 4: return 'Other';
       default: return 'Unknown';
     }
   };
@@ -269,37 +277,38 @@ const SubscriptionHistory = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">User-wise Subscription History</h2>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+        <h2 className="text-lg sm:text-xl font-semibold">User-wise Subscription History</h2>
         <button
           onClick={exportHistory}
           disabled={subscriptions.length === 0}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-600 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base w-full sm:w-auto"
         >
           <Download size={16} />
-          Export CSV
+          <span className="hidden sm:inline">Export CSV</span>
+          <span className="sm:hidden">Export</span>
         </button>
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-          <div className="relative">
+      <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="relative sm:col-span-2 lg:col-span-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <input
               type="text"
-              placeholder="Search by name, email, or mobile..."
+              placeholder="Search by name, email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
             />
           </div>
 
           <select
             value={statusFilter}
             onChange={(e) => handleFilterChange('status', e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -311,11 +320,14 @@ const SubscriptionHistory = () => {
           <select
             value={subscriptionTypeFilter}
             onChange={(e) => handleFilterChange('subscriptionType', e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           >
             <option value="all">All Types</option>
+            <option value="0">Free Trial</option>
             <option value="1">Yearly</option>
             <option value="2">Monthly</option>
+            <option value="3">Lifetime</option>
+            <option value="4">Other</option>
           </select>
 
           <input
@@ -323,15 +335,16 @@ const SubscriptionHistory = () => {
             placeholder="User ID"
             value={userIdFilter}
             onChange={(e) => setUserIdFilter(e.target.value)}
-            className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="px-3 sm:px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           />
 
           <button
             onClick={clearFilters}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+            className="px-3 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 text-sm sm:text-base"
           >
             <Filter size={16} />
-            Clear Filters
+            <span className="hidden sm:inline">Clear Filters</span>
+            <span className="sm:hidden">Clear</span>
           </button>
         </div>
       </div>
@@ -350,77 +363,189 @@ const SubscriptionHistory = () => {
 
       {/* Subscriptions Table */}
       <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan Details</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscription Period</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Renewals</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Left</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan Details</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subscription Period</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Renewals</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days Left</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Array.isArray(subscriptions) && subscriptions.map((user, index) => {
+              {Array.isArray(subscriptions) && subscriptions.length > 0 ? subscriptions.map((user, index) => {
                 const subscription = user.current_subscription;
-                const daysLeft = subscription ? getDaysRemaining(subscription.end_date) : 0;
+                // Use days_remaining from API response if available, otherwise calculate
+                const daysLeft = subscription 
+                  ? (subscription.days_remaining !== undefined ? subscription.days_remaining : getDaysRemaining(subscription.end_date))
+                  : 0;
+                
+                // Format mobile number
+                const formattedMobile = user.user_mobile 
+                  ? `${user.user_phone_code || ''}${user.user_mobile}`.replace(/^\+?91/, '')
+                  : 'N/A';
+                
                 return (
                   <tr key={user.user_id || index} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div>
-                        <div className="font-medium text-gray-900">ID: {user.user_id}</div>
+                    <td className="px-4 sm:px-6 py-4 text-sm">
+                      <div className="space-y-1">
+                        <div className="font-medium text-gray-900">ID: {user.user_id || 'N/A'}</div>
                         <div className="text-gray-500">{user.user_name || 'N/A'}</div>
                         <div className="text-gray-500">{user.user_email || 'N/A'}</div>
-                        <div className="text-gray-500">{user.user_phone_code}{user.user_mobile || 'N/A'}</div>
+                        <div className="text-gray-500">{formattedMobile}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div>
-                        <div className="font-medium">{subscription ? subscription.plan_name || 'N/A' : 'No Subscription'}</div>
+                    <td className="px-4 sm:px-6 py-4 text-sm">
+                      <div className="space-y-1">
+                        <div className="font-medium text-gray-900">
+                          {subscription ? (subscription.plan_name || 'N/A') : 'No Subscription'}
+                        </div>
                         <div className="text-gray-500">
-                          {subscription ? getSubscriptionTypeLabel(subscription.subscription_type) : 'N/A'}
+                          {subscription ? getSubscriptionTypeLabel(subscription.subscription_type, subscription) : 'N/A'}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div>
-                        <div>Start: {subscription ? subscription.start_date || 'N/A' : 'N/A'}</div>
-                        <div>End: {subscription ? subscription.end_date || 'N/A' : 'N/A'}</div>
+                    <td className="px-4 sm:px-6 py-4 text-sm text-gray-500">
+                      <div className="space-y-1">
+                        <div>Start: {subscription ? (subscription.start_date || 'N/A') : 'N/A'}</div>
+                        <div>End: {subscription ? (subscription.end_date || 'N/A') : 'N/A'}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(subscription ? subscription.status : 'none')}`}>
                         {subscription ? (subscription.status_label || subscription.status || 'N/A') : 'No Subscription'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                       {user.purchase_statistics ? user.purchase_statistics.total_purchases : 0}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                       {subscription ? (
-                        <span className={`px-2 py-1 text-xs rounded-full ${daysLeft > 7 ? 'bg-green-100 text-green-800' :
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          daysLeft > 7 ? 'bg-green-100 text-green-800' :
                           daysLeft > 0 ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
+                          'bg-red-100 text-red-800'
+                        }`}>
                           {daysLeft > 0 ? `${daysLeft} days` : 'Expired'}
                         </span>
                       ) : (
-                        <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
                           No Subscription
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
                       {subscription ? `₹${subscription.user_amount || subscription.plan_amount || 0}` : 'N/A'}
                     </td>
                   </tr>
                 );
-              })}
+              }) : (
+                <tr>
+                  <td colSpan="7" className="px-6 py-8 text-center text-gray-500">
+                    No subscription data available
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden">
+          {Array.isArray(subscriptions) && subscriptions.length > 0 ? subscriptions.map((user, index) => {
+            const subscription = user.current_subscription;
+            const daysLeft = subscription 
+              ? (subscription.days_remaining !== undefined ? subscription.days_remaining : getDaysRemaining(subscription.end_date))
+              : 0;
+            const formattedMobile = user.user_mobile 
+              ? `${user.user_phone_code || ''}${user.user_mobile}`.replace(/^\+?91/, '')
+              : 'N/A';
+            
+            return (
+              <div key={user.user_id || index} className="border-b border-gray-200 p-4 sm:p-6 hover:bg-gray-50">
+                <div className="space-y-3">
+                  {/* User Info */}
+                  <div>
+                    <div className="font-medium text-gray-900 mb-1">ID: {user.user_id || 'N/A'}</div>
+                    <div className="text-sm text-gray-600 space-y-1">
+                      <div>{user.user_name || 'N/A'}</div>
+                      <div>{user.user_email || 'N/A'}</div>
+                      <div>{formattedMobile}</div>
+                    </div>
+                  </div>
+
+                  {/* Plan Details */}
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">Plan Details</div>
+                    <div className="font-medium text-gray-900">
+                      {subscription ? (subscription.plan_name || 'N/A') : 'No Subscription'}
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      {subscription ? getSubscriptionTypeLabel(subscription.subscription_type, subscription) : 'N/A'}
+                    </div>
+                  </div>
+
+                  {/* Subscription Period */}
+                  <div>
+                    <div className="text-xs text-gray-500 mb-1">Subscription Period</div>
+                    <div className="text-sm text-gray-600">
+                      <div>Start: {subscription ? (subscription.start_date || 'N/A') : 'N/A'}</div>
+                      <div>End: {subscription ? (subscription.end_date || 'N/A') : 'N/A'}</div>
+                    </div>
+                  </div>
+
+                  {/* Status, Renewals, Days Left, Amount */}
+                  <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-100">
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Status</div>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(subscription ? subscription.status : 'none')}`}>
+                        {subscription ? (subscription.status_label || subscription.status || 'N/A') : 'No Subscription'}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Renewals</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {user.purchase_statistics ? user.purchase_statistics.total_purchases : 0}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Days Left</div>
+                      {subscription ? (
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          daysLeft > 7 ? 'bg-green-100 text-green-800' :
+                          daysLeft > 0 ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {daysLeft > 0 ? `${daysLeft} days` : 'Expired'}
+                        </span>
+                      ) : (
+                        <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                          No Subscription
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500 mb-1">Amount</div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {subscription ? `₹${subscription.user_amount || subscription.plan_amount || 0}` : 'N/A'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          }) : (
+            <div className="text-center py-8">
+              <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No subscriptions found</h3>
+              <p className="text-gray-500">Try adjusting your search or filter criteria.</p>
+            </div>
+          )}
         </div>
 
         {subscriptions.length === 0 && !loading && (
@@ -440,7 +565,7 @@ const SubscriptionHistory = () => {
       )}
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white p-4 rounded-lg shadow-sm border">
           <div className="flex items-center">
             <Users className="w-8 h-8 text-blue-500" />
@@ -482,7 +607,7 @@ const SubscriptionHistory = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg shadow-sm border">
           <div className="flex items-center">
             <Users className="w-8 h-8 text-gray-500" />

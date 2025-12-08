@@ -178,6 +178,13 @@ const apiService = {
     return response.data;
   },
 
+  permanentlyDeleteUser: async (user_id) => {
+    const response = await api.delete(config.API_ENDPOINTS.PERMANENTLY_DELETE_USER, {
+      data: { user_id }
+    });
+    return response.data;
+  },
+
   // Get dashboard data
   getDashboardData: async () => {
     const response = await api.get(config.API_ENDPOINTS.DASHBOARD);
@@ -620,6 +627,11 @@ const apiService = {
 
   getSubscriptionRevenueReport: async (params = {}) => {
     const response = await api.get(config.API_ENDPOINTS.GET_SUBSCRIPTION_REVENUE_REPORT, { params });
+    return response.data;
+  },
+
+  getRevenueChartData: async (params = {}) => {
+    const response = await api.get(config.API_ENDPOINTS.GET_REVENUE_CHART_DATA, { params });
     return response.data;
   },
 

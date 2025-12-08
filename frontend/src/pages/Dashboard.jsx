@@ -218,8 +218,7 @@ export default function Dashboard() {
             <table className="w-full">
               <thead className="bg-gray-50 sticky top-0">
                 <tr>
-                  <th className="text-left p-4 font-semibold">Name</th>
-                  <th className="text-left p-4 font-semibold">Email</th>
+                  <th className="text-left p-4 font-semibold">ID</th>
                   <th className="text-left p-4 font-semibold">Mobile</th>
                   <th className="text-left p-4 font-semibold">Joined</th>
                   <th className="text-left p-4 font-semibold">Revenue</th>
@@ -229,8 +228,7 @@ export default function Dashboard() {
               <tbody>
                 {userData.map((user) => (
                   <tr key={user.id} className="border-b hover:bg-gray-50">
-                    <td className="p-4 font-medium">{user.name || 'Unknown'}</td>
-                    <td className="p-4 text-gray-600">{user.email || 'No email'}</td>
+                    <td className="p-4 font-medium">#{user.id || 'N/A'}</td>
                     <td className="p-4 text-gray-600">{user.mobile_number || 'No mobile'}</td>
                     <td className="p-4 text-gray-600">{user.joined_at || 'Unknown'}</td>
                     <td className="p-4 text-gray-600">₹{user.revenue || 0}</td>
@@ -248,14 +246,13 @@ export default function Dashboard() {
                   <div className="space-y-2">
                     <div className="flex justify-between items-start">
                       <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
-                        {user.name || 'Unknown'}
+                        ID: #{user.id || 'N/A'}
                       </h4>
                       <span className="text-sm font-semibold text-green-600 flex-shrink-0">
                         ₹{user.revenue || 0}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600 truncate">{user.email || 'No email'}</p>
-                    <p className="text-xs text-gray-600 truncate">{user.mobile_number || 'No mobile'}</p>
+                    <p className="text-xs text-gray-600 truncate">Mobile: {user.mobile_number || 'No mobile'}</p>
                     <div className="flex justify-between items-center text-xs text-gray-500">
                       <span className="truncate">{user.plan || 'No Plan'}</span>
                       <span className="truncate ml-2">{user.joined_at || 'Unknown'}</span>
@@ -571,6 +568,7 @@ export default function Dashboard() {
 
         {/* Desktop Table View */}
         <div className="hidden md:block overflow-x-auto">
+          {support_tickets.length > 0 ? (
           <table className="w-full">
             <thead>
               <tr className="border-b">
@@ -616,11 +614,18 @@ export default function Dashboard() {
               ))}
             </tbody>
           </table>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <Headphones className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+              <p>No support tickets found</p>
+            </div>
+          )}
         </div>
 
         {/* Mobile Card View */}
         <div className="md:hidden space-y-3">
-          {support_tickets.slice(0, 4).map((ticket) => (
+          {support_tickets.length > 0 ? (
+            support_tickets.slice(0, 4).map((ticket) => (
             <div key={ticket.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex justify-between items-start mb-2">
                 <h4 className="font-medium text-sm text-gray-900 truncate flex-1 mr-2">
@@ -655,7 +660,13 @@ export default function Dashboard() {
                 <p className="text-gray-500 mt-1">{ticket.created_at || 'Unknown'}</p>
               </div>
             </div>
-          ))}
+            ))
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <Headphones className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+              <p>No support tickets found</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -674,8 +685,8 @@ export default function Dashboard() {
           {recent_subscribers.slice(0, 5).map((subscriber) => (
             <div key={subscriber.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <div className="min-w-0 flex-1 mr-3">
-                <p className="font-medium text-sm sm:text-base truncate">{subscriber.name || 'Unknown'}</p>
-                <p className="text-xs sm:text-sm text-gray-600 truncate">{subscriber.email || 'No email'}</p>
+                <p className="font-medium text-sm sm:text-base truncate">ID: #{subscriber.id || 'N/A'}</p>
+                <p className="text-xs sm:text-sm text-gray-600 truncate">Mobile: {subscriber.mobile_number || 'No mobile'}</p>
               </div>
               <div className="text-right flex-shrink-0">
                 <p className="font-medium text-green-600 text-sm sm:text-base">₹{subscriber.revenue || 0}</p>

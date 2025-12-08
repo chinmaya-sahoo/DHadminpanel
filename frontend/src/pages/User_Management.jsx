@@ -44,11 +44,13 @@ const UserManagement = () => {
   // Modal states
   const [showViewModal, setShowViewModal] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetails, setUserDetails] = useState(null);
   const [suspensionReason, setSuspensionReason] = useState('');
   const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Fetch users data from API
   useEffect(() => {
@@ -257,6 +259,36 @@ const UserManagement = () => {
     }
   };
 
+  const handleDeleteUser = (user) => {
+    setSelectedUser(user);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteUser = async () => {
+    if (!selectedUser) return;
+
+    try {
+      setIsDeleting(true);
+      const response = await apiService.permanentlyDeleteUser(selectedUser.user_id);
+      
+      if (response && response.success) {
+        // Remove user from local state
+        setUsers(prevUsers => prevUsers.filter(u => u.user_id !== selectedUser.user_id));
+        setTotalUsers(prev => prev - 1);
+        setShowDeleteModal(false);
+        setSelectedUser(null);
+        alert('User permanently deleted successfully');
+      } else {
+        alert(response?.msg?.[0] || 'Failed to delete user');
+      }
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      alert(err.response?.data?.msg?.[0] || 'Failed to delete user. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const handleConfirmSuspend = async () => {
     if (!selectedUser) return;
 
@@ -285,6 +317,7 @@ const UserManagement = () => {
   const closeModals = () => {
     setShowViewModal(false);
     setShowSuspendModal(false);
+    setShowDeleteModal(false);
     setSelectedUser(null);
     setUserDetails(null);
     setSuspensionReason('');
@@ -573,6 +606,13 @@ const UserManagement = () => {
                               <UserCheck className="w-4 h-4" />
                             </button>
                           )}
+                          <button
+                            onClick={() => handleDeleteUser(user)}
+                            className="text-red-600 hover:text-red-900 p-1"
+                            title="Permanently Delete User"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -680,6 +720,13 @@ const UserManagement = () => {
                           <UserCheck className="w-4 h-4" />
                         </button>
                       )}
+                      <button
+                        onClick={() => handleDeleteUser(user)}
+                        className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50"
+                        title="Permanently Delete User"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -1037,6 +1084,100 @@ const UserManagement = () => {
                       <UserX className="w-4 h-4" />
                       <span className="hidden sm:inline">Suspend User</span>
                       <span className="sm:hidden">Suspend</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Delete User Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-2 sm:mx-0">
+            <div className="p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base sm:text-lg font-semibold text-red-600 flex items-center gap-2">
+                  <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6" />
+                  Permanently Delete User
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedUser(null);
+                  }}
+                  className="text-gray-400 hover:text-gray-600 p-1"
+                >
+                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                </button>
+              </div>
+
+              <div className="mb-4">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                  <p className="text-xs sm:text-sm text-red-800 font-medium mb-2">
+                    ⚠️ Warning: This action cannot be undone!
+                  </p>
+                  <p className="text-xs text-red-700">
+                    This will permanently delete the user and all their related data including:
+                  </p>
+                  <ul className="text-xs text-red-700 mt-2 ml-4 list-disc">
+                    <li>User account and profile</li>
+                    <li>All subscriptions</li>
+                    <li>All accounts and transactions</li>
+                    <li>All budgets and expenses</li>
+                    <li>All udhari/customer data</li>
+                    <li>All support tickets</li>
+                    <li>All reminders and notifications</li>
+                  </ul>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-xs sm:text-sm text-gray-700 mb-2">
+                    <strong>User Details:</strong>
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <strong>Name:</strong> {selectedUser?.name || 'Unknown User'}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <strong>User ID:</strong> {selectedUser?.user_id}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <strong>Mobile:</strong> {selectedUser?.phone_code || ''} {selectedUser?.mobile || 'N/A'}
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    <strong>Email:</strong> {selectedUser?.email || 'N/A'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setSelectedUser(null);
+                  }}
+                  disabled={isDeleting}
+                  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50 text-sm sm:text-base"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteUser}
+                  disabled={isDeleting}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 text-sm sm:text-base"
+                >
+                  {isDeleting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span className="hidden sm:inline">Deleting...</span>
+                      <span className="sm:hidden">Deleting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Trash2 className="w-4 h-4" />
+                      <span className="hidden sm:inline">Delete Permanently</span>
+                      <span className="sm:hidden">Delete</span>
                     </>
                   )}
                 </button>

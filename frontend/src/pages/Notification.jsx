@@ -723,8 +723,8 @@ export default function Notification() {
 
       {/* Create/Edit Campaign Modal */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-2 sm:mx-0 max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">
                 {isEditMode ? "Edit Notification Campaign" : "Create Notification Campaign"}
@@ -832,8 +832,8 @@ export default function Notification() {
 
       {/* Delete Campaign Modal */}
       {showDeleteModal && selectedCampaign && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-2 sm:mx-0">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">Delete Campaign</h2>
               <button
@@ -888,8 +888,8 @@ export default function Notification() {
 
       {/* Send Campaign Modal */}
       {showSendModal && selectedCampaign && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-2 sm:mx-0">
             <div className="p-4 sm:p-6 border-b border-gray-200 flex items-center justify-between">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900">Send Campaign</h2>
               <button

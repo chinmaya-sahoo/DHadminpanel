@@ -455,11 +455,11 @@ const ManualUpgrade = () => {
               User Mobile Number <span className="text-red-500">*</span>
             </label>
             <div className="relative">
-              <input
-                type="tel"
-                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            <input
+              type="tel"
+              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Type mobile number (e.g., 9786784534)"
-                value={userMobile}
+              value={userMobile}
                 onChange={(e) => {
                   const value = e.target.value.replace(/[^0-9]/g, '');
                   setUserMobile(value);
@@ -480,9 +480,9 @@ const ManualUpgrade = () => {
                   // Delay to allow click on dropdown items
                   setTimeout(() => setShowAutocomplete(false), 200);
                 }}
-                required
+              required
                 disabled={!!searchedUser}
-              />
+            />
               {autocompleteLoading && (
                 <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 animate-spin text-gray-400" />
               )}
