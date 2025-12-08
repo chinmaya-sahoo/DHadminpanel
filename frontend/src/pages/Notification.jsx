@@ -490,16 +490,12 @@ export default function Notification() {
               <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.users_with_tokens || 0}</p>
             </div>
             <div>
-              <p className="text-xs sm:text-sm text-gray-600">Yearly Subscribers</p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.yearly_subscribers || 0}</p>
-            </div>
-            <div>
-              <p className="text-xs sm:text-sm text-gray-600">Monthly Subscribers</p>
-              <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.monthly_subscribers || 0}</p>
-            </div>
-            <div>
               <p className="text-xs sm:text-sm text-gray-600">Free Users</p>
               <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.free_users || 0}</p>
+            </div>
+            <div>
+              <p className="text-xs sm:text-sm text-gray-600">Paid Users</p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900">{systemStats.paid_users || 0}</p>
             </div>
           </div>
         </div>
