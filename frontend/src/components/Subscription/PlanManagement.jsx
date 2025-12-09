@@ -198,13 +198,13 @@ const PlanManagement = () => {
           const amountValue = planToUpdate.amount === '' || planToUpdate.amount === null || planToUpdate.amount === undefined ? 0 : planToUpdate.amount;
           
           updateData = {
-            subscription_id: planToUpdate.subscription_id.toString(), // Convert to string
-            description: planToUpdate.description,
-            text: planToUpdate.text,
+          subscription_id: planToUpdate.subscription_id.toString(), // Convert to string
+          description: planToUpdate.description,
+          text: planToUpdate.text,
             amount: amountValue,
-            subscription_type: planToUpdate.subscription_type.toString(), // Convert to string
-            validity_days: validityDays
-          };
+          subscription_type: planToUpdate.subscription_type.toString(), // Convert to string
+          validity_days: validityDays
+        };
         }
 
         const response = await apiService.updateSubscriptionPlan(updateData);
@@ -580,14 +580,14 @@ const PlanManagement = () => {
                         {plan.amount === 0 || plan.amount === '0' ? '0.00' : plan.amount}
                       </div>
                     ) : (
-                      <input
-                        type="number"
-                        step="0.01"
+                    <input
+                      type="number"
+                      step="0.01"
                         min="0"
-                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="0.00 (Enter 0 for free plan)"
                         value={plan.amount === '' || plan.amount === null || plan.amount === undefined ? '' : plan.amount}
-                        onChange={(e) => {
+                      onChange={(e) => {
                           const inputValue = e.target.value;
                           if (inputValue === '') {
                             // Allow empty field so user can completely erase
@@ -597,13 +597,13 @@ const PlanManagement = () => {
                           } else {
                             const numValue = parseFloat(inputValue);
                             if (!isNaN(numValue) && numValue >= 0) {
-                              setPlans(plans.map(p =>
+                        setPlans(plans.map(p =>
                                 p.subscription_id === editPlan ? { ...p, amount: numValue } : p
-                              ));
+                        ));
                             }
                           }
-                        }}
-                      />
+                      }}
+                    />
                     )}
                     {isSpecialPlan(plan) && (
                       <p className="text-xs text-gray-500 mt-1">

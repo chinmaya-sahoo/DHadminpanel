@@ -488,6 +488,9 @@ const UserManagement = () => {
                       Contact
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      User Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -531,6 +534,17 @@ const UserManagement = () => {
                           <Phone className="w-4 h-4 text-gray-400" />
                           {user.phone_code || ''} {user.mobile || 'No mobile'}
                         </div>
+                      </td>
+
+                      {/* User Type */}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                          user.user_type === 0 || user.user_type === '0'
+                            ? 'bg-purple-100 text-purple-800'
+                            : 'bg-blue-100 text-blue-800'
+                        }`}>
+                          {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
+                        </span>
                       </td>
 
                       {/* Status */}
@@ -653,6 +667,17 @@ const UserManagement = () => {
                             <Phone className="w-3 h-3 text-gray-400" />
                             <span>{user.phone_code || ''} {user.mobile || 'No mobile'}</span>
                           </div>
+                        </div>
+
+                        {/* User Type Badge */}
+                        <div className="mb-2">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            user.user_type === 0 || user.user_type === '0'
+                              ? 'bg-purple-100 text-purple-800'
+                              : 'bg-blue-100 text-blue-800'
+                          }`}>
+                            {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
+                          </span>
                         </div>
 
                         {/* Status Badges */}
