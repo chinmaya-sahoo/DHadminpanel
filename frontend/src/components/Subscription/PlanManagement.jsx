@@ -106,7 +106,10 @@ const PlanManagement = () => {
 
   // Create a new plan
   const handleCreatePlan = async () => {
-    if (newPlan.description && newPlan.text && newPlan.amount >= 0) {
+    // Convert empty string amount to 0
+    const amountValue = newPlan.amount === '' || newPlan.amount === null || newPlan.amount === undefined ? 0 : newPlan.amount;
+    
+    if (newPlan.description && newPlan.text && amountValue >= 0) {
       try {
         setLoading(true);
 
@@ -115,7 +118,7 @@ const PlanManagement = () => {
         const planData = {
           description: newPlan.description,
           text: newPlan.text,
-          amount: newPlan.amount,
+          amount: amountValue,
           subscription_type: newPlan.subscription_type,
           validity_days: requiresCustomValidity(newPlan.subscription_type) 
             ? newPlan.validity_days 
@@ -174,11 +177,14 @@ const PlanManagement = () => {
           validityDays = planToUpdate.validity_days || getDefaultValidityDays(planToUpdate.subscription_type);
         }
 
+        // Convert empty string amount to 0
+        const amountValue = planToUpdate.amount === '' || planToUpdate.amount === null || planToUpdate.amount === undefined ? 0 : planToUpdate.amount;
+
         const updateData = {
           subscription_id: planToUpdate.subscription_id.toString(), // Convert to string
           description: planToUpdate.description,
           text: planToUpdate.text,
-          amount: planToUpdate.amount,
+          amount: amountValue,
           subscription_type: planToUpdate.subscription_type.toString(), // Convert to string
           validity_days: validityDays
         };
@@ -332,10 +338,17 @@ const PlanManagement = () => {
                   min="0"
                   className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="0.00 (Enter 0 for free plan)"
-                  value={newPlan.amount === 0 ? '' : newPlan.amount}
+                  value={newPlan.amount === 0 || newPlan.amount === '' ? '' : newPlan.amount}
                   onChange={(e) => {
-                    const value = e.target.value === '' ? '' : parseFloat(e.target.value) || '';
-                    setNewPlan({ ...newPlan, amount: value === '' ? 0 : value });
+                    const inputValue = e.target.value;
+                    if (inputValue === '') {
+                      setNewPlan({ ...newPlan, amount: '' });
+                    } else {
+                      const numValue = parseFloat(inputValue);
+                      if (!isNaN(numValue) && numValue >= 0) {
+                        setNewPlan({ ...newPlan, amount: numValue });
+                      }
+                    }
                   }}
                 />
               </div>
@@ -548,12 +561,21 @@ const PlanManagement = () => {
                       min="0"
                       className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="0.00 (Enter 0 for free plan)"
-                      value={plan.amount === 0 ? '' : plan.amount}
+                      value={plan.amount === 0 || plan.amount === '' ? '' : plan.amount}
                       onChange={(e) => {
-                        const value = e.target.value === '' ? '' : parseFloat(e.target.value) || '';
-                        setPlans(plans.map(p =>
-                          p.subscription_id === editPlan ? { ...p, amount: value === '' ? 0 : value } : p
-                        ));
+                        const inputValue = e.target.value;
+                        if (inputValue === '') {
+                          setPlans(plans.map(p =>
+                            p.subscription_id === editPlan ? { ...p, amount: '' } : p
+                          ));
+                        } else {
+                          const numValue = parseFloat(inputValue);
+                          if (!isNaN(numValue) && numValue >= 0) {
+                            setPlans(plans.map(p =>
+                              p.subscription_id === editPlan ? { ...p, amount: numValue } : p
+                            ));
+                          }
+                        }
                       }}
                     />
                   </div>
