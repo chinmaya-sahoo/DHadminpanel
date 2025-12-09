@@ -61,9 +61,14 @@ const PlanManagement = () => {
     }
   };
 
-  // Check if a plan is a special plan
-  const isSpecialPlan = (planId) => {
-    return specialPlans.includes(Number(planId));
+  // Check if a plan is a special plan (subscription_type = 0)
+  const isSpecialPlan = (plan) => {
+    // Check by subscription_type = 0 instead of subscription_id
+    if (typeof plan === 'object' && plan !== null) {
+      return parseInt(plan.subscription_type) === 0;
+    }
+    // Fallback: if plan is a number (subscription_id), check if it's in special plans
+    return specialPlans.includes(Number(plan));
   };
 
   // Get plan type label for special plans
@@ -164,7 +169,7 @@ const PlanManagement = () => {
         // For special plans, ensure validity_days is set
         // For "Other" type, validity_days is required
         let validityDays;
-        if (isSpecialPlan(planToUpdate.subscription_id)) {
+        if (isSpecialPlan(planToUpdate)) {
           validityDays = planToUpdate.validity_days || 15; // Default to 15 days for special plans
         } else if (requiresCustomValidity(planToUpdate.subscription_type)) {
           validityDays = planToUpdate.validity_days;
@@ -207,13 +212,14 @@ const PlanManagement = () => {
 
   // Delete a plan (using confirmation modal)
   const handleDeletePlan = (planId) => {
-    // Prevent deletion of special plans
-    if (isSpecialPlan(planId)) {
-      setError('Cannot delete special plans (Free Trial and Referral Reward plans)');
+    const planToDelete = Array.isArray(plans) ? plans.find(p => p.subscription_id === planId) : null;
+    
+    // Prevent deletion of plans with subscription_type = 0
+    if (planToDelete && parseInt(planToDelete.subscription_type) === 0) {
+      setError('Cannot delete plans with subscription_type = 0');
       return;
     }
 
-    const planToDelete = Array.isArray(plans) ? plans.find(p => p.subscription_id === planId) : null;
     confirmAction(
       `Are you sure you want to delete the "${planToDelete?.description || 'this'}" plan? This action cannot be undone.`,
       async () => {
@@ -435,17 +441,17 @@ const PlanManagement = () => {
               <h3 className="text-lg sm:text-xl font-bold text-gray-900">
                 {plan.description || plan.text || 'Unnamed Plan'}
               </h3>
-              {isSpecialPlan(plan.subscription_id) && (
+              {isSpecialPlan(plan) && (
                 <div className="mt-1">
                   <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {getSpecialPlanLabel(plan.subscription_id)}
+                    Special Plan (Type 0)
                   </span>
                 </div>
               )}
               <div className="mt-2">
                 <span className="text-2xl sm:text-3xl font-bold text-gray-900">₹{plan.amount}</span>
                 <span className="text-xs sm:text-sm text-gray-500 ml-2">
-                  /{isSpecialPlan(plan.subscription_id)
+                  /{isSpecialPlan(plan)
                     ? 'special'
                     : (plan.subscription_type_label ? plan.subscription_type_label.toLowerCase() : getSubscriptionTypeLabel(plan.subscription_type).toLowerCase())
                   }
@@ -474,7 +480,7 @@ const PlanManagement = () => {
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
-                {!isSpecialPlan(plan.subscription_id) && (
+                {!isSpecialPlan(plan) && (
                   <button
                     onClick={() => handleDeletePlan(plan.subscription_id)}
                     className="text-red-600 hover:text-red-900 p-2"
@@ -484,10 +490,10 @@ const PlanManagement = () => {
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
-                {isSpecialPlan(plan.subscription_id) && (
+                {isSpecialPlan(plan) && (
                   <button
                     className="text-gray-400 p-2 cursor-not-allowed"
-                    title="Cannot delete special plans"
+                    title="Cannot delete plans with subscription_type = 0"
                     disabled
                   >
                     <Trash2 className="w-4 h-4" />
@@ -582,7 +588,7 @@ const PlanManagement = () => {
                     />
                   </div>
 
-                  {!isSpecialPlan(plan.subscription_id) ? (
+                  {!isSpecialPlan(plan) ? (
                     <>
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Subscription Type</label>
@@ -642,7 +648,7 @@ const PlanManagement = () => {
                       Validity Days
                       {requiresCustomValidity(plan.subscription_type) && <span className="text-red-500 ml-1">*</span>}
                       <span className="text-gray-500 text-sm ml-1">
-                        {isSpecialPlan(plan.subscription_id) 
+                        {isSpecialPlan(plan) 
                           ? '(editable for special plans)' 
                           : requiresCustomValidity(plan.subscription_type)
                           ? '(required for Other type)'
