@@ -235,13 +235,6 @@ const PlanManagement = () => {
     return typeObj ? typeObj.label : 'Unknown';
   };
 
-  // Get subscription type label with validity for display
-  const getSubscriptionTypeDisplay = (type) => {
-    const typeObj = subscriptionTypes.find(t => t.value === type);
-    if (!typeObj) return 'Unknown';
-    return typeObj.defaultValidity ? `${typeObj.label} (${typeObj.defaultValidity} days)` : typeObj.label;
-  };
-
   if (loading && (!Array.isArray(plans) || plans.length === 0)) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -336,8 +329,9 @@ const PlanManagement = () => {
                 <input
                   type="number"
                   step="0.01"
+                  min="0"
                   className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                  placeholder="299.00"
+                  placeholder="0.00 (Enter 0 for free plan)"
                   value={newPlan.amount === 0 ? '' : newPlan.amount}
                   onChange={(e) => {
                     const value = e.target.value === '' ? '' : parseFloat(e.target.value) || '';
@@ -551,7 +545,9 @@ const PlanManagement = () => {
                     <input
                       type="number"
                       step="0.01"
+                      min="0"
                       className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="0.00 (Enter 0 for free plan)"
                       value={plan.amount === 0 ? '' : plan.amount}
                       onChange={(e) => {
                         const value = e.target.value === '' ? '' : parseFloat(e.target.value) || '';
