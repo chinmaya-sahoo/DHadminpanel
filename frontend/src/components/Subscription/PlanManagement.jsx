@@ -338,11 +338,11 @@ const PlanManagement = () => {
                   min="0"
                   className="w-full p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
                   placeholder="0.00 (Enter 0 for free plan)"
-                  value={newPlan.amount === 0 || newPlan.amount === '' ? '' : newPlan.amount}
+                  value={newPlan.amount === '' || newPlan.amount === null || newPlan.amount === undefined ? 0 : newPlan.amount}
                   onChange={(e) => {
                     const inputValue = e.target.value;
                     if (inputValue === '') {
-                      setNewPlan({ ...newPlan, amount: '' });
+                      setNewPlan({ ...newPlan, amount: 0 });
                     } else {
                       const numValue = parseFloat(inputValue);
                       if (!isNaN(numValue) && numValue >= 0) {
@@ -561,12 +561,12 @@ const PlanManagement = () => {
                       min="0"
                       className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="0.00 (Enter 0 for free plan)"
-                      value={plan.amount === 0 || plan.amount === '' ? '' : plan.amount}
+                      value={plan.amount === '' || plan.amount === null || plan.amount === undefined ? 0 : plan.amount}
                       onChange={(e) => {
                         const inputValue = e.target.value;
                         if (inputValue === '') {
                           setPlans(plans.map(p =>
-                            p.subscription_id === editPlan ? { ...p, amount: '' } : p
+                            p.subscription_id === editPlan ? { ...p, amount: 0 } : p
                           ));
                         } else {
                           const numValue = parseFloat(inputValue);
