@@ -16,7 +16,8 @@ const PlanManagement = () => {
     text: '',
     amount: 0,
     subscription_type: 2,
-    validity_days: ''
+    validity_days: '',
+    features: []
   });
 
   // Add confirmation modal state
@@ -118,8 +119,11 @@ const PlanManagement = () => {
       try {
         setLoading(true);
 
-        // Prepare plan data with validity_days
+        // Prepare plan data with validity_days and features
         // For "Other" type, validity_days must be provided by user
+        // Filter out empty features
+        const validFeatures = (newPlan.features || []).filter(f => f && f.trim() !== '');
+        
         const planData = {
           description: newPlan.description,
           text: newPlan.text,
@@ -127,7 +131,8 @@ const PlanManagement = () => {
           subscription_type: newPlan.subscription_type,
           validity_days: requiresCustomValidity(newPlan.subscription_type) 
             ? newPlan.validity_days 
-            : getDefaultValidityDays(newPlan.subscription_type)
+            : getDefaultValidityDays(newPlan.subscription_type),
+          features: validFeatures
         };
 
         // Validate validity_days for "Other" type
@@ -145,7 +150,8 @@ const PlanManagement = () => {
             text: '',
             amount: 0,
             subscription_type: 2,
-            validity_days: ''
+            validity_days: '',
+            features: []
           });
           setIsCreating(false);
         } else {
@@ -182,6 +188,9 @@ const PlanManagement = () => {
           validityDays = planToUpdate.validity_days || getDefaultValidityDays(planToUpdate.subscription_type);
         }
 
+        // Filter out empty features
+        const validFeatures = (planToUpdate.features || []).filter(f => f && f.trim() !== '');
+
         // For special plans, don't send amount and subscription_type (they cannot be changed)
         // For regular plans, include all fields
         let updateData;
@@ -190,7 +199,8 @@ const PlanManagement = () => {
             subscription_id: planToUpdate.subscription_id.toString(),
             description: planToUpdate.description,
             text: planToUpdate.text,
-            validity_days: validityDays
+            validity_days: validityDays,
+            features: validFeatures
             // Note: amount and subscription_type are NOT included for special plans
           };
         } else {
@@ -203,7 +213,8 @@ const PlanManagement = () => {
           text: planToUpdate.text,
             amount: amountValue,
           subscription_type: planToUpdate.subscription_type.toString(), // Convert to string
-          validity_days: validityDays
+          validity_days: validityDays,
+          features: validFeatures
         };
         }
 
@@ -317,7 +328,8 @@ const PlanManagement = () => {
                     text: '',
                     amount: 0,
                     subscription_type: 2,
-                    validity_days: ''
+                    validity_days: '',
+                    features: []
                   });
                 }}
                 className="p-2 hover:bg-gray-100 rounded-full"
@@ -416,6 +428,54 @@ const PlanManagement = () => {
                 </div>
               )}
 
+              {/* Features Section */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                  Features
+                </label>
+                <div className="space-y-2">
+                  {newPlan.features && newPlan.features.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        className="flex-1 p-2 sm:p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                        placeholder={`Feature ${index + 1}`}
+                        value={feature}
+                        onChange={(e) => {
+                          const updatedFeatures = [...newPlan.features];
+                          updatedFeatures[index] = e.target.value;
+                          setNewPlan({ ...newPlan, features: updatedFeatures });
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updatedFeatures = newPlan.features.filter((_, i) => i !== index);
+                          setNewPlan({ ...newPlan, features: updatedFeatures });
+                        }}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                        title="Remove feature"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setNewPlan({ ...newPlan, features: [...(newPlan.features || []), ''] });
+                    }}
+                    className="w-full flex items-center justify-center gap-2 p-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-sm text-gray-600 hover:text-blue-600"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    Add Feature
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Add point-wise features for this plan
+                </p>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
                 <button
                   onClick={handleCreatePlan}
@@ -432,7 +492,9 @@ const PlanManagement = () => {
                       description: '',
                       text: '',
                       amount: 0,
-                      subscription_type: 1
+                      subscription_type: 1,
+                      validity_days: '',
+                      features: []
                     });
                   }}
                   className="px-4 sm:px-6 py-2 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm sm:text-base"
@@ -478,9 +540,26 @@ const PlanManagement = () => {
             </div>
 
             <div className="mb-6">
-              <p className="text-sm text-gray-600 text-center">
+              <p className="text-sm text-gray-600 text-center mb-3">
                 {plan.description && plan.text ? plan.text : (plan.description || plan.text || 'No description available')}
               </p>
+              
+              {/* Display Features */}
+              {plan.features && plan.features.length > 0 && (
+                <div className="mt-4">
+                  <h4 className="text-xs font-semibold text-gray-700 mb-2 text-left">Features:</h4>
+                  <ul className="text-left space-y-1">
+                    {plan.features.map((feature, index) => (
+                      feature && feature.trim() !== '' && (
+                        <li key={index} className="text-xs text-gray-600 flex items-start gap-2">
+                          <span className="text-blue-500 mt-1">•</span>
+                          <span>{feature}</span>
+                        </li>
+                      )
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-between items-center">
@@ -715,6 +794,61 @@ const PlanManagement = () => {
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Range: 1-36,500 days (1-100 years)
+                    </p>
+                  </div>
+
+                  {/* Features Section in Edit Modal */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Features
+                    </label>
+                    <div className="space-y-2">
+                      {(plan.features || []).map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            className="flex-1 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            placeholder={`Feature ${index + 1}`}
+                            value={feature || ''}
+                            onChange={(e) => {
+                              const updatedFeatures = [...(plan.features || [])];
+                              updatedFeatures[index] = e.target.value;
+                              setPlans(plans.map(p =>
+                                p.subscription_id === editPlan ? { ...p, features: updatedFeatures } : p
+                              ));
+                            }}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const updatedFeatures = (plan.features || []).filter((_, i) => i !== index);
+                              setPlans(plans.map(p =>
+                                p.subscription_id === editPlan ? { ...p, features: updatedFeatures } : p
+                              ));
+                            }}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                            title="Remove feature"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updatedFeatures = [...(plan.features || []), ''];
+                          setPlans(plans.map(p =>
+                            p.subscription_id === editPlan ? { ...p, features: updatedFeatures } : p
+                          ));
+                        }}
+                        className="w-full flex items-center justify-center gap-2 p-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-sm text-gray-600 hover:text-blue-600"
+                      >
+                        <PlusCircle className="w-4 h-4" />
+                        Add Feature
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Add point-wise features for this plan
                     </p>
                   </div>
 
