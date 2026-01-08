@@ -110,7 +110,7 @@ const App = () => {
           <Route path="/admin/feedback-support" element={<ProtectedRoute><Feedback_Support /></ProtectedRoute>} />
           <Route path="/admin/contact-us" element={<ProtectedRoute><ContactUs /></ProtectedRoute>} />
           <Route path="/admin/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
-          <Route path="/admin/view-user" element={<ProtectedRoute><ViewUser /></ProtectedRoute>} />
+          <Route path="/admin/view-user/:id" element={<ProtectedRoute><ViewUser /></ProtectedRoute>} />
           <Route path="/admin/tnc" element={<ProtectedRoute><Tandc /></ProtectedRoute>} />
           <Route path="/admin/notification" element={<ProtectedRoute><Notification /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/admin/login" replace />} />

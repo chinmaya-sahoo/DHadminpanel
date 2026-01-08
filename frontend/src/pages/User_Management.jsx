@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Users,
   Search,
@@ -73,15 +74,14 @@ const UserManagement = () => {
   const [sortBy, setSortBy] = useState('created');
 
   // Modal states
-  const [showViewModal, setShowViewModal] = useState(false);
   const [showSuspendModal, setShowSuspendModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [userDetails, setUserDetails] = useState(null);
   const [suspensionReason, setSuspensionReason] = useState('');
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const navigate = useNavigate();
 
   // Fetch users data from API
   useEffect(() => {
@@ -239,25 +239,9 @@ const UserManagement = () => {
   };
 
   // Handler functions
-  const handleViewUser = async (user) => {
-    try {
-      setIsLoadingDetails(true);
-      setSelectedUser(user);
-      setShowViewModal(true);
-
-      // Fetch detailed user information
-      const response = await apiService.getUserDetails(user.user_id);
-      if (response.success) {
-        setUserDetails(response.data);
-      } else {
-        setUserDetails(user); // Fallback to basic user data
-      }
-    } catch (err) {
-      console.error('Error fetching user details:', err);
-      setUserDetails(user); // Fallback to basic user data
-    } finally {
-      setIsLoadingDetails(false);
-    }
+  // Handler functions
+  const handleViewUser = (user) => {
+    navigate(`/admin/view-user/${user.user_id}`);
   };
 
   const handleSuspendUser = (user) => {
@@ -346,11 +330,9 @@ const UserManagement = () => {
   };
 
   const closeModals = () => {
-    setShowViewModal(false);
     setShowSuspendModal(false);
     setShowDeleteModal(false);
     setSelectedUser(null);
-    setUserDetails(null);
     setSuspensionReason('');
   };
 
@@ -797,262 +779,6 @@ const UserManagement = () => {
           </div>
         )}
       </div>
-
-      {/* View User Modal */}
-      {showViewModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-y-auto">
-            <div className="p-4 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900">User Details</h3>
-                <button
-                  onClick={closeModals}
-                  className="text-gray-400 hover:text-gray-600 p-1"
-                >
-                  <X className="w-5 h-5 sm:w-6 sm:h-6" />
-                </button>
-              </div>
-
-              {isLoadingDetails ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                  <span className="ml-2 text-gray-600 text-sm sm:text-base">Loading user details...</span>
-                </div>
-              ) : (
-                <div className="space-y-4 sm:space-y-6">
-                  {/* Personal Information */}
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Personal Information</h4>
-
-                    {/* Profile Photo */}
-                    <div className="flex justify-center mb-6">
-                      <div className="relative h-20 w-20 sm:h-24 sm:w-24">
-                        <UserAvatar
-                          src={userDetails?.personal_info?.profile_photo}
-                          name={userDetails?.personal_info?.name}
-                          className="h-full w-full shadow-md border-4 border-white"
-                          initialsSizeClass="text-xl sm:text-2xl"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">User ID</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.user_id || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Full Name</label>
-                        <p className="text-xs sm:text-sm text-gray-900">
-                          {userDetails?.personal_info?.name ||
-                            (userDetails?.personal_info?.f_name && userDetails?.personal_info?.l_name
-                              ? `${userDetails.personal_info.f_name} ${userDetails.personal_info.l_name}`.trim()
-                              : userDetails?.personal_info?.f_name || userDetails?.personal_info?.l_name || 'Not provided')}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Phone Code</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Email</label>
-                        <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.personal_info?.email || 'Not provided'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Mobile</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.mobile || 'Not provided'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Date of Birth</label>
-                        <p className="text-xs sm:text-sm text-gray-900">
-                          {userDetails?.personal_info?.dob
-                            ? new Date(userDetails.personal_info.dob).toLocaleDateString('en-IN', {
-                              day: '2-digit',
-                              month: 'short',
-                              year: 'numeric'
-                            })
-                            : 'Not provided'
-                          }
-                        </p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Age</label>
-                        <p className="text-xs sm:text-sm text-gray-900">
-                          {userDetails?.personal_info?.age !== null && userDetails?.personal_info?.age !== undefined
-                            ? `${userDetails.personal_info.age} years`
-                            : userDetails?.personal_info?.dob
-                              ? (() => {
-                                const dobDate = new Date(userDetails.personal_info.dob);
-                                const today = new Date();
-                                let age = today.getFullYear() - dobDate.getFullYear();
-                                const monthDiff = today.getMonth() - dobDate.getMonth();
-                                if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dobDate.getDate())) {
-                                  age--;
-                                }
-                                return `${age} years`;
-                              })()
-                              : 'N/A'}
-                        </p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Gender</label>
-                        <p className="text-xs sm:text-sm text-gray-900">
-                          {userDetails?.personal_info?.gender === 1 ? 'Male' :
-                            userDetails?.personal_info?.gender === 2 ? 'Female' :
-                              userDetails?.personal_info?.gender === 3 ? 'Other' : 'Not specified'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Account Information */}
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Account Information</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">User Type</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.user_type_label || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Registered At</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.timestamps?.created_at || 'N/A'}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Status Information */}
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Status Information</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Active Status</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.active_flag === 1
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                          }`}>
-                          {userDetails?.status_info?.active_status || (userDetails?.status_info?.active_flag === 1 ? 'Active' : 'Suspended')}
-                        </span>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Notifications</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.notification_status === 1
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-gray-100 text-gray-800'
-                          }`}>
-                          {userDetails?.status_info?.notification_status_label || (userDetails?.status_info?.notification_status === 1 ? 'Enabled' : 'Disabled')}
-                        </span>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">App Lock</label>
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails?.status_info?.app_lock_status === 1
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
-                          }`}>
-                          {userDetails?.status_info?.app_lock_status_label || (userDetails?.status_info?.app_lock_status === 1 ? 'Enabled' : 'Disabled')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Subscription Information */}
-                  {userDetails?.current_subscription && (
-                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                      <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Current Subscription</h4>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Plan Name</label>
-                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.plan_name}</p>
-                        </div>
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Amount Paid</label>
-                          <p className="text-xs sm:text-sm text-gray-900">₹{userDetails.current_subscription.amount_paid}</p>
-                        </div>
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Start Date</label>
-                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.start_date}</p>
-                        </div>
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700">End Date</label>
-                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.end_date}</p>
-                        </div>
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Days Remaining</label>
-                          <p className="text-xs sm:text-sm text-gray-900">{userDetails.current_subscription.days_remaining} days</p>
-                        </div>
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700">Status</label>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${userDetails.current_subscription.status === 'Active'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                            }`}>
-                            {userDetails.current_subscription.status}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* User Statistics */}
-                  {userDetails?.statistics && (
-                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                      <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">User Statistics</h4>
-                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 sm:gap-4">
-                        <div className="text-center">
-                          <div className="text-lg sm:text-2xl font-bold text-blue-600">{userDetails.statistics.total_transactions || 0}</div>
-                          <div className="text-xs text-gray-600">Transactions</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg sm:text-2xl font-bold text-green-600">{userDetails.statistics.total_customers || 0}</div>
-                          <div className="text-xs text-gray-600">Customers</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg sm:text-2xl font-bold text-purple-600">{userDetails.statistics.total_managers || 0}</div>
-                          <div className="text-xs text-gray-600">Managers</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg sm:text-2xl font-bold text-orange-600">{userDetails.statistics.total_feedback || 0}</div>
-                          <div className="text-xs text-gray-600">Feedback</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg sm:text-2xl font-bold text-red-600">{userDetails.statistics.total_ratings || 0}</div>
-                          <div className="text-xs text-gray-600">Ratings</div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* User Accounts */}
-                  {userDetails?.accounts && userDetails.accounts.length > 0 && (
-                    <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                      <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">User Accounts</h4>
-                      <div className="space-y-2">
-                        {userDetails.accounts.map((account, index) => (
-                          <div key={account.account_id || index} className="flex justify-between items-center p-2 bg-white rounded border">
-                            <div className="min-w-0 flex-1">
-                              <span className="font-medium text-xs sm:text-sm">{account.account_name}</span>
-                              <span className="ml-2 text-xs text-gray-600">({account.account_type_label})</span>
-                            </div>
-                            <span className="text-xs text-gray-500">{account.created_at}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="flex justify-end mt-4 sm:mt-6">
-                <button
-                  onClick={closeModals}
-                  className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Suspend User Modal */}
       {showSuspendModal && (
