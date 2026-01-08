@@ -511,7 +511,18 @@ const UserManagement = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                            {user.profile_photo ? (
+                              <img
+                                src={user.profile_photo}
+                                alt={user.name || 'User'}
+                                className="h-10 w-10 rounded-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <div className={`h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center ${user.profile_photo ? 'hidden' : ''}`}>
                               <span className="text-white font-medium text-sm">
                                 {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
                               </span>
@@ -642,7 +653,18 @@ const UserManagement = () => {
                     <div className="flex items-center space-x-3 min-w-0 flex-1">
                       {/* Avatar */}
                       <div className="flex-shrink-0">
-                        <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                        {user.profile_photo ? (
+                          <img
+                            src={user.profile_photo}
+                            alt={user.name || 'User'}
+                            className="h-10 w-10 rounded-full object-cover"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div className={`h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center ${user.profile_photo ? 'hidden' : ''}`}>
                           <span className="text-white font-medium text-sm">
                             {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
                           </span>
@@ -792,6 +814,31 @@ const UserManagement = () => {
                   {/* Personal Information */}
                   <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
                     <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Personal Information</h4>
+
+                    {/* Profile Photo */}
+                    <div className="flex justify-center mb-6">
+                      <div className="relative h-20 w-20 sm:h-24 sm:w-24">
+                        {userDetails?.personal_info?.profile_photo ? (
+                          <img
+                            src={userDetails.personal_info.profile_photo}
+                            alt={userDetails.personal_info.name || 'User'}
+                            className="h-full w-full rounded-full object-cover shadow-md border-4 border-white"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              // Fallback is handled by the sibling div logic or just showing initials if image fails
+                              e.target.nextSibling.classList.remove('hidden');
+                              e.target.nextSibling.classList.add('flex');
+                            }}
+                          />
+                        ) : null}
+                        <div className={`h-full w-full rounded-full bg-blue-500 flex items-center justify-center shadow-md border-4 border-white ${userDetails?.personal_info?.profile_photo ? 'hidden' : 'flex'}`}>
+                          <span className="text-white font-bold text-xl sm:text-2xl">
+                            {(userDetails?.personal_info?.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">User ID</label>
