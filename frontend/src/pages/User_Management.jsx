@@ -270,7 +270,7 @@ const UserManagement = () => {
     try {
       setIsDeleting(true);
       const response = await apiService.permanentlyDeleteUser(selectedUser.user_id);
-      
+
       if (response && response.success) {
         // Remove user from local state
         setUsers(prevUsers => prevUsers.filter(u => u.user_id !== selectedUser.user_id));
@@ -538,11 +538,10 @@ const UserManagement = () => {
 
                       {/* User Type */}
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.user_type === 0 || user.user_type === '0'
-                            ? 'bg-purple-100 text-purple-800'
-                            : 'bg-blue-100 text-blue-800'
-                        }`}>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.user_type === 0 || user.user_type === '0'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-blue-100 text-blue-800'
+                          }`}>
                           {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
                         </span>
                       </td>
@@ -671,11 +670,10 @@ const UserManagement = () => {
 
                         {/* User Type Badge */}
                         <div className="mb-2">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.user_type === 0 || user.user_type === '0'
-                              ? 'bg-purple-100 text-purple-800'
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.user_type === 0 || user.user_type === '0'
+                            ? 'bg-purple-100 text-purple-800'
+                            : 'bg-blue-100 text-blue-800'
+                            }`}>
                             {user.user_type_label || (user.user_type === 0 || user.user_type === '0' ? 'Manager' : 'User')}
                           </span>
                         </div>
@@ -809,16 +807,16 @@ const UserManagement = () => {
                         </p>
                       </div>
                       <div>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Phone Code</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || 'N/A'}</p>
+                      </div>
+                      <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Email</label>
                         <p className="text-xs sm:text-sm text-gray-900 break-all">{userDetails?.personal_info?.email || 'Not provided'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Mobile</label>
                         <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.mobile || 'Not provided'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Phone Code</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.personal_info?.phone_code || 'N/A'}</p>
                       </div>
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-gray-700">Date of Birth</label>
@@ -839,7 +837,7 @@ const UserManagement = () => {
                           {userDetails?.personal_info?.age !== null && userDetails?.personal_info?.age !== undefined
                             ? `${userDetails.personal_info.age} years`
                             : userDetails?.personal_info?.dob
-                            ? (() => {
+                              ? (() => {
                                 const dobDate = new Date(userDetails.personal_info.dob);
                                 const today = new Date();
                                 let age = today.getFullYear() - dobDate.getFullYear();
@@ -849,7 +847,7 @@ const UserManagement = () => {
                                 }
                                 return `${age} years`;
                               })()
-                            : 'N/A'}
+                              : 'N/A'}
                         </p>
                       </div>
                       <div>
@@ -872,8 +870,8 @@ const UserManagement = () => {
                         <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.user_type_label || 'N/A'}</p>
                       </div>
                       <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Login Type</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.account_info?.login_type_label || 'App'}</p>
+                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Registered At</label>
+                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.timestamps?.created_at || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
@@ -908,21 +906,6 @@ const UserManagement = () => {
                           }`}>
                           {userDetails?.status_info?.app_lock_status_label || (userDetails?.status_info?.app_lock_status === 1 ? 'Enabled' : 'Disabled')}
                         </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Timestamps */}
-                  <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-                    <h4 className="text-sm sm:text-md font-semibold text-gray-900 mb-3">Timestamps</h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Created At</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.timestamps?.created_at || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs sm:text-sm font-medium text-gray-700">Updated At</label>
-                        <p className="text-xs sm:text-sm text-gray-900">{userDetails?.timestamps?.updated_at || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
