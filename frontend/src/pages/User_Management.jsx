@@ -54,6 +54,8 @@ const UserAvatar = ({ src, name, className, initialsSizeClass = "text-sm" }) => 
       alt={name || 'User'}
       className={`rounded-full object-cover ${className}`}
       onError={() => setImgError(true)}
+      referrerPolicy="no-referrer"
+      crossOrigin="anonymous"
     />
   );
 };
