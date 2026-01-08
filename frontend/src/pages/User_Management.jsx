@@ -29,6 +29,35 @@ import {
 import apiService from '../services/api';
 import { formatDate } from '../utils/dateUtils';
 
+// Helper component for User Avatar to handle image loading errors reliably
+const UserAvatar = ({ src, name, className, initialsSizeClass = "text-sm" }) => {
+  const [imgError, setImgError] = useState(false);
+
+  // Reset error when src changes
+  React.useEffect(() => {
+    setImgError(false);
+  }, [src]);
+
+  if (!src || imgError) {
+    return (
+      <div className={`rounded-full bg-blue-500 flex items-center justify-center ${className}`}>
+        <span className={`text-white font-medium ${initialsSizeClass}`}>
+          {(name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={name || 'User'}
+      className={`rounded-full object-cover ${className}`}
+      onError={() => setImgError(true)}
+    />
+  );
+};
+
 const UserManagement = () => {
   // API data states
   const [users, setUsers] = useState([]);
@@ -511,22 +540,11 @@ const UserManagement = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
-                            {user.profile_photo ? (
-                              <img
-                                src={user.profile_photo}
-                                alt={user.name || 'User'}
-                                className="h-10 w-10 rounded-full object-cover"
-                                onError={(e) => {
-                                  e.target.style.display = 'none';
-                                  e.target.nextSibling.style.display = 'flex';
-                                }}
-                              />
-                            ) : null}
-                            <div className={`h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center ${user.profile_photo ? 'hidden' : ''}`}>
-                              <span className="text-white font-medium text-sm">
-                                {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
-                              </span>
-                            </div>
+                            <UserAvatar
+                              src={user.profile_photo}
+                              name={user.name}
+                              className="h-10 w-10"
+                            />
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-medium text-gray-900">{user.name || 'Unknown User'}</div>
@@ -653,22 +671,11 @@ const UserManagement = () => {
                     <div className="flex items-center space-x-3 min-w-0 flex-1">
                       {/* Avatar */}
                       <div className="flex-shrink-0">
-                        {user.profile_photo ? (
-                          <img
-                            src={user.profile_photo}
-                            alt={user.name || 'User'}
-                            className="h-10 w-10 rounded-full object-cover"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              e.target.nextSibling.style.display = 'flex';
-                            }}
-                          />
-                        ) : null}
-                        <div className={`h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center ${user.profile_photo ? 'hidden' : ''}`}>
-                          <span className="text-white font-medium text-sm">
-                            {(user.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase()}
-                          </span>
-                        </div>
+                        <UserAvatar
+                          src={user.profile_photo}
+                          name={user.name}
+                          className="h-10 w-10"
+                        />
                       </div>
 
                       {/* Content */}
@@ -818,24 +825,12 @@ const UserManagement = () => {
                     {/* Profile Photo */}
                     <div className="flex justify-center mb-6">
                       <div className="relative h-20 w-20 sm:h-24 sm:w-24">
-                        {userDetails?.personal_info?.profile_photo ? (
-                          <img
-                            src={userDetails.personal_info.profile_photo}
-                            alt={userDetails.personal_info.name || 'User'}
-                            className="h-full w-full rounded-full object-cover shadow-md border-4 border-white"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                              // Fallback is handled by the sibling div logic or just showing initials if image fails
-                              e.target.nextSibling.classList.remove('hidden');
-                              e.target.nextSibling.classList.add('flex');
-                            }}
-                          />
-                        ) : null}
-                        <div className={`h-full w-full rounded-full bg-blue-500 flex items-center justify-center shadow-md border-4 border-white ${userDetails?.personal_info?.profile_photo ? 'hidden' : 'flex'}`}>
-                          <span className="text-white font-bold text-xl sm:text-2xl">
-                            {(userDetails?.personal_info?.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2)}
-                          </span>
-                        </div>
+                        <UserAvatar
+                          src={userDetails?.personal_info?.profile_photo}
+                          name={userDetails?.personal_info?.name}
+                          className="h-full w-full shadow-md border-4 border-white"
+                          initialsSizeClass="text-xl sm:text-2xl"
+                        />
                       </div>
                     </div>
 
